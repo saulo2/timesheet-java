@@ -21,7 +21,7 @@
 
         <nav class="text-center">
             <ul class="pagination">
-                <li ng-repeat="rel in rels">
+                <li class="{{getLinkClass(rel)}}" ng-repeat="rel in rels">
                     <a href="#{{resource.$href(rel)}}">{{rel}}</a>
                 </li>
             </ul>

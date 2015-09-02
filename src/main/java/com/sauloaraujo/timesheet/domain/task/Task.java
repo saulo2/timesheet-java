@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.Identifiable;
 
@@ -28,6 +30,8 @@ public class Task implements Identifiable<Integer> {
 	private Integer id;
 	
 	@Column(name="TAS_NM")
+	@NotNull
+	@Size(min=1, max=100)
 	private String name;
 
 	@Column(name="TAS_DS")

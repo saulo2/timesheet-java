@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.Identifiable;
 
@@ -24,7 +26,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="PRO_PROJECT")
+@Table(
+	name="PRO_PROJECT", 
+	uniqueConstraints=@UniqueConstraint(columnNames="PRO_NM")
+)
 @Setter
 @Getter
 public class Project implements Identifiable<Integer> {
@@ -34,17 +39,20 @@ public class Project implements Identifiable<Integer> {
 	private Integer id;
 	
 	@Column(name="PRO_NM")
+	@NotNull
+	@Size(min=1, max=100)
 	private String name;
 
 	@Column(name="PRO_DS")
 	private String description;
-	
+
 	@Temporal(TemporalType.DATE)
-	@Column(name="PRO_START_DATE")	
+	@Column(name="PRO_START_DATE")
+	@NotNull
 	private Date startDate;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="PRO_END_DATE")
+	@Column(name="PRO_END_DATE")	
 	private Date endDate;
 
 	@ManyToMany

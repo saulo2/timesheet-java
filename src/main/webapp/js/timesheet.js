@@ -57,7 +57,7 @@
         }
     }])
 
-    timesheetModule.controller("projectSearchResultController", ["$scope", "resource", function ($scope, resource) {
+    timesheetModule.controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
         $scope.resource = resource
 
         $scope.rels = []
@@ -72,6 +72,14 @@
         resource.$get("projects").then(function (projects) {
             $scope.projects = projects
         })
+        
+        $scope.getLinkClass = function(rel) {
+            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {                
+                return "active"
+            } else {
+                return null 
+            }
+        }
     }])
 
     timesheetModule.controller("projectFormController", ["$location", "$routeParams", "$scope", "resource", function ($location, $routeParams, $scope, resource) {
