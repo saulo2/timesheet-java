@@ -8,5 +8,5 @@ import lombok.Setter;
 public class EntryCell {
 	private int id;
 	private Double time;
-	private boolean enabled;
+	private boolean disabled;
 }

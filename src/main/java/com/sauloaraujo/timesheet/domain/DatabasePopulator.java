@@ -1,7 +1,7 @@
 package com.sauloaraujo.timesheet.domain;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -19,13 +19,11 @@ import com.sauloaraujo.timesheet.domain.task.TaskRepository;
 public class DatabasePopulator {
 	private @Autowired ProjectRepository projectRepository;
 	private @Autowired TaskRepository taskRepository;
-	private @Autowired DateService dateService;
+	private @Autowired CalendarService calendarService;
 	
 	@Transactional
 	@PostConstruct
 	public void populateDatebase() {
-		Date today = dateService.midnight();
-
 		List<Task> tasks = new ArrayList<>();
 		for (int i = 1; i <= 10; ++i) {
 			Task task = new Task();
@@ -34,13 +32,15 @@ public class DatabasePopulator {
 		}
 		taskRepository.save(tasks);
 
+		Calendar calendar = calendarService.midnight();
 		List<Project> projects = new ArrayList<>();
 		for (int i = 1; i <= 10; ++i) {
 			Project project = new Project();
 			project.setName("Project " + i);
-			project.setStartDate(today);
+			project.setStartDate(calendar.getTime());
 			project.setTasks(tasks);
 			projects.add(project);
+			calendar.add(Calendar.DATE, 1);
 		}
 		projectRepository.save(projects);
 	}
