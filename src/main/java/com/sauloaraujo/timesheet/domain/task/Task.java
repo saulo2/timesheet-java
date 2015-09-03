@@ -8,12 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.Identifiable;
 
+import com.sauloaraujo.timesheet.domain.entry.Entry;
 import com.sauloaraujo.timesheet.domain.project.Project;
 
 import lombok.Getter;
@@ -38,5 +40,8 @@ public class Task implements Identifiable<Integer> {
 	private String description;	
 	
 	@ManyToMany(mappedBy="tasks")
-	private List<Project> projects;		
+	private List<Project> projects;
+	
+	@OneToMany(mappedBy="task")
+	private List<Entry> entries;	
 }

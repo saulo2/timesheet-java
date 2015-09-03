@@ -19,12 +19,12 @@ import com.sauloaraujo.timesheet.domain.task.TaskRepository;
 public class DatabasePopulator {
 	private @Autowired ProjectRepository projectRepository;
 	private @Autowired TaskRepository taskRepository;
-	private @Autowired DateFactory dateFactory;
+	private @Autowired DateService dateService;
 	
 	@Transactional
 	@PostConstruct
 	public void populateDatebase() {
-		Date today = dateFactory.today();
+		Date today = dateService.midnight();
 
 		List<Task> tasks = new ArrayList<>();
 		for (int i = 1; i <= 10; ++i) {

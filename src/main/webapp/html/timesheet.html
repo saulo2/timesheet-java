@@ -1,0 +1,34 @@
+<table class="table table-bordered timesheet" sticky>
+    <thead>
+        <tr>
+            <th rowspan="2">Project</th>
+            <th rowspan="2">Task</th>
+            <th colspan="{{resource.dates.length}}">
+                <a href="#{{resource.$href('previous')}}" class="glyphicon glyphicon-circle-arrow-left" ng-show="resource.$has('previous')"></a>
+                Date
+                <a href="#{{resource.$href('next')}}" class="glyphicon glyphicon-circle-arrow-right" ng-show="resource.$has('next')"></a>
+                <span class="pull-right">
+                    <a href="#{{resource.$href('minus')}}" class="glyphicon glyphicon-minus-sign" ng-show="resource.$has('minus')"></a>
+                    <a href="#{{resource.$href('plus')}}" class="glyphicon glyphicon-plus-sign" ng-show="resource.$has('plus')"></a>
+                </span>
+            </th>
+        </tr>
+        <tr>
+            <th ng-repeat="date in resource.dates">
+                {{date | date: "shortDate": "+00:00"}}
+            </th>
+        </tr>
+    </thead>
+</table>
+
+<table class="table table-bordered timesheet">
+    <tbody ng-repeat="projectRow in resource.projectRows">
+        <tr ng-repeat="taskRow in projectRow.taskRows">
+            <td rowspan="{{projectRow.taskRows.length}}" ng-show="$first">{{projectRow.project}}</td>
+            <td>{{taskRow.task}}</td>
+            <td ng-repeat="entryCell in taskRow.entryCells">
+                <input type="text" ng-model="entryCell.time" ui-number-mask="1">
+            </td>
+        </tr>
+    </tbody>
+</table>

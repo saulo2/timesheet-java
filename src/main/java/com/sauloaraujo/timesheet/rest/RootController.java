@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sauloaraujo.timesheet.rest.project.ProjectController;
+import com.sauloaraujo.timesheet.rest.timesheet.TimesheetController;
 
 @RestController
 @RequestMapping("/api")
@@ -20,6 +21,7 @@ public class RootController {
 		root.add(linkTo(methodOn(RootController.class).getRoot()).withSelfRel());
 		root.add(linkTo(methodOn(ProjectController.class).getProjectForm("new")).withRel("newProjectForm"));
 		root.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(null, null, null)).withRel("projectSearchOptionsForm"));
+		root.add(linkTo(methodOn(TimesheetController.class).get(7)).withRel("timesheet"));
 		return root;
 	}
 }

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,6 +21,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.Identifiable;
 
+import com.sauloaraujo.timesheet.domain.entry.Entry;
 import com.sauloaraujo.timesheet.domain.task.Task;
 
 import lombok.Getter;
@@ -52,7 +54,7 @@ public class Project implements Identifiable<Integer> {
 	private Date startDate;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="PRO_END_DATE")	
+	@Column(name="PRO_END_DATE")
 	private Date endDate;
 
 	@ManyToMany
@@ -61,6 +63,9 @@ public class Project implements Identifiable<Integer> {
 		joinColumns=@JoinColumn(name="PRO_ID"),
 		inverseJoinColumns=@JoinColumn(name="TAS_ID"),
 		uniqueConstraints=@UniqueConstraint(columnNames={"PRO_ID", "TAS_ID"})
-	)	
+	)
 	private List<Task> tasks;
+
+	@OneToMany(mappedBy="project")
+	private List<Entry> entries;
 }

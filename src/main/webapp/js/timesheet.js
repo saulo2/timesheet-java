@@ -11,20 +11,25 @@
         $routeProvider
             .when("/", {
             })
-            .when("/" + document.location.origin + "/api/users/me/projects/search/result", {
-                controller: "projectSearchResultController",
-                resolve: resolve,
-                templateUrl: "html/projectSearchResult.html"
-            })
-            .when("/" + document.location.origin + "/api/users/me/projects/search/options/form", {
+            .when("/" + document.location.origin + "/api/projects/search/options/form", {
                 controller: "projectSearchOptionsFormController",
                 resolve: resolve,
                 templateUrl: "html/projectSearchOptionsForm.html"
             })
-            .when("/" + document.location.origin + "/api/users/me/projects/:id/form", {
+            .when("/" + document.location.origin + "/api/projects/search/result", {
+                controller: "projectSearchResultController",
+                resolve: resolve,
+                templateUrl: "html/projectSearchResult.html"
+            })
+            .when("/" + document.location.origin + "/api/projects/:id/form", {
                 controller: "projectFormController",
                 resolve: resolve,
                 templateUrl: "html/projectForm.html"
+            })
+            .when("/" + document.location.origin + "/api/timesheets/:start", {
+                controller: "timesheetController",
+                resolve: resolve,
+                templateUrl: "html/timesheet.html"
             })
             .when("/ok", {
                 templateUrl: "html/ok.html"
@@ -149,5 +154,9 @@
                 }).replace()
             })
         }
+    }])
+
+    timesheetModule.controller("timesheetController", ["$scope", "resource", function ($scope, resource) {
+        $scope.resource = resource
     }])
 })()

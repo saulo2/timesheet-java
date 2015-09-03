@@ -25,7 +25,7 @@ import com.sauloaraujo.timesheet.domain.task.TaskService;
 import com.sauloaraujo.timesheet.rest.task.TaskResourceAssembler;
 
 @RestController
-@RequestMapping("/api/users/me/projects")
+@RequestMapping("/api/projects")
 @ExposesResourceFor(Project.class)
 public class ProjectController {
 	private static final int FIRST_PAGE = 0;
@@ -78,7 +78,7 @@ public class ProjectController {
 			project = projectService.create();
 			resource.add(linkTo(methodOn(ProjectController.class).post(null)).withRel("save"));
 		} else {
-			project = projectService.findById(Integer.parseInt(id));
+			project = projectService.findOne(Integer.parseInt(id));
 			resource.add(linkTo(methodOn(ProjectController.class).put(project.getId(), null)).withRel("save"));
 			resource.add(linkTo(methodOn(ProjectController.class).delete(project.getId())).withRel("delete"));
 		}		

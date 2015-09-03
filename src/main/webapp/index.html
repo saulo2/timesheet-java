@@ -49,6 +49,29 @@
             .checkboxes-panel > .panel-body {
                 padding-top: 8px;
             }
+
+            .timesheet > thead > tr > th,
+            .timesheet > tbody > tr > td {
+                background-color: white;
+
+                text-align: center;
+
+                vertical-align: middle;
+            }
+
+            .timesheet > thead > tr:nth-child(1) > th:nth-child(1),
+            .timesheet > thead > tr:nth-child(1) > th:nth-child(2),
+            .timesheet > tbody > tr > td:nth-child(1),
+            .timesheet > tbody > tr > td:nth-child(2)
+            {
+                width: 15%
+            }
+
+            .timesheet > tbody > tr > td > input[type=text] {
+                border: none;
+
+                width: 100%;
+            }
         </style>
     </head>
     <body ng-controller="rootController">
@@ -70,6 +93,9 @@
                                 <a href="#{{resource.$href('projectSearchOptionsForm')}}">Search</a>
                             </li>
                         </ul>
+                    </li>
+                    <li ng-show="resource.$has('timesheet')">
+                        <a href="#{{resource.$href('timesheet')}}">Timesheet</a>
                     </li>
                 </ul>
             </div>
