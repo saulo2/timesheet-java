@@ -11,7 +11,8 @@
         }
 
         $routeProvider
-            .when("/", {})
+            .when("/", {                
+            })
             .when("/" + document.location.origin + "/api/projects/search/options/form", {
                 controller: "projectSearchOptionsFormController",
                 resolve: resolve,
@@ -52,21 +53,29 @@
     }])
 
     timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
-        $scope.resource = resource
-
-        resource.$get("tasks").then(function (tasks) {
-            $scope.tasks = tasks
-        })
-
         $scope.filterTasks = function (task) {
             if ($scope.filteringTasks && $scope.taskNameSubstring) {
                 return task.name.toLowerCase().indexOf($scope.taskNameSubstring.toLowerCase()) >= 0
             }
             return true
         }
+
+        $scope.resource = resource
+
+        resource.$get("tasks").then(function (tasks) {
+            $scope.tasks = tasks
+        })
     }])
 
     timesheet.controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
+        $scope.getLinkClass = function (rel) {
+            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {
+                return "active"
+            } else {
+                return null
+            }
+        }
+
         $scope.resource = resource
 
         $scope.rels = []
@@ -81,38 +90,9 @@
         resource.$get("projects").then(function (projects) {
             $scope.projects = projects
         })
-
-        $scope.getLinkClass = function (rel) {
-            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {
-                return "active"
-            } else {
-                return null
-            }
-        }
     }])
 
     timesheet.controller("projectFormController", ["$location", "$routeParams", "$scope", "resource", function ($location, $routeParams, $scope, resource) {
-        $scope.resource = resource
-
-        resource.$get("project").then(function (project) {
-            function toDate(milliseconds) {
-                if (milliseconds === null) {
-                    return null
-                } else {
-                    return moment.utc(milliseconds).toDate()
-                }
-            }
-
-            $scope.originalProject = project
-            $scope.project = _.clone(project)
-            $scope.project.startDate = toDate($scope.project.startDate)
-            $scope.project.endDate = toDate($scope.project.endDate)
-        })
-
-        resource.$get("tasks").then(function (tasks) {
-            $scope.tasks = tasks
-        })
-
         $scope.hasTask = function (task) {
             return hasTaskUri(task.$href("self"))
         }
@@ -158,6 +138,27 @@
                 }).replace()
             })
         }
+
+        $scope.resource = resource
+
+        resource.$get("project").then(function (project) {
+            function toDate(milliseconds) {
+                if (milliseconds === null) {
+                    return null
+                } else {
+                    return moment.utc(milliseconds).toDate()
+                }
+            }
+
+            $scope.originalProject = project
+            $scope.project = _.clone(project)
+            $scope.project.startDate = toDate($scope.project.startDate)
+            $scope.project.endDate = toDate($scope.project.endDate)
+        })
+
+        resource.$get("tasks").then(function (tasks) {
+            $scope.tasks = tasks
+        })
     }])
 
     timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
@@ -169,7 +170,7 @@
                         taskRows: [{
                             id: taskRow.id,
                             entryCells: [{
-                                id: entryCell.id,
+                                column: entryCell.column,
                                 time: entryCell.time
                             }]
                         }]
@@ -234,7 +235,7 @@
             toggleRowVisibility($event, getTaskRowKey(projectRow, taskRow))
         }
 
-        $scope.filterProjectRow = function(projectRow) {
+        $scope.filterProjectRow = function (projectRow) {
             if ($scope.pinning || $scope.getProjectRowState(projectRow).visible) {
                 if ($scope.filteringProjectRow && $scope.projectNameSubstring) {
                     return projectRow.project.toLowerCase().indexOf($scope.projectNameSubstring.toLowerCase()) >= 0
@@ -246,8 +247,8 @@
             }
         }
 
-        $scope.filterTaskRow = function(projectRow) {
-            return function(taskRow) {
+        $scope.filterTaskRow = function (projectRow) {
+            return function (taskRow) {
                 if ($scope.pinning || $scope.getTaskRowState(projectRow, taskRow).visible) {
                     if ($scope.filteringTaskRow && $scope.taskNameSubstring) {
                         return taskRow.task.toLowerCase().indexOf($scope.taskNameSubstring.toLowerCase()) >= 0
@@ -260,22 +261,22 @@
             }
         }
 
-        $scope.toggleChartVisibility = function($event) {
+        $scope.toggleChartVisibility = function ($event) {
             $event.preventDefault()
 
             $scope.chart.visible = !$scope.chart.visible
         }
 
-        $scope.updateChart = function() {
-            $scope.chart.labels = _.map($scope.resource.projectRows, function(projectRow) {
+        $scope.updateChart = function () {
+            $scope.chart.labels = _.map($scope.resource.projectRows, function (projectRow) {
                 return projectRow.project
             })
 
             $scope.chart.data = []
-            _.forEach($scope.resource.projectRows, function(projectRow) {
+            _.forEach($scope.resource.projectRows, function (projectRow) {
                 var time = 0
-                _.forEach(projectRow.taskRows, function(taskRow) {
-                    _.forEach(taskRow.entryCells, function(entryCell) {
+                _.forEach(projectRow.taskRows, function (taskRow) {
+                    _.forEach(taskRow.entryCells, function (entryCell) {
                         time += entryCell.time
                     })
                 })
@@ -283,9 +284,51 @@
             })
         }
 
+        $scope.patchTimesheet = function (timesheet) {
+            _.each(timesheet.projectRows, function (projectRow) {
+                _.each(projectRow.taskRows, function (taskRow) {
+                    _.each(taskRow.entryCells, function (entryCell) {
+                        var date = moment.utc(timesheet.dates[0]).add(entryCell.column, "days").valueOf()
+                        patchEntryCell(projectRow.id, taskRow.id, date, entryCell.time);
+                    })
+                })
+            })
+
+            function patchEntryCell(projectRowId, taskRowId, date, time) {
+                _.each($scope.resource.projectRows, function (projectRow) {
+                    if (projectRow.id === projectRowId) {
+                        _.each(projectRow.taskRows, function (taskRow) {
+                            if (taskRow.id === taskRowId) {
+                                _.each($scope.resource.dates, function (d, index) {
+                                    if (d === date) {
+                                        taskRow.entryCells[index].time = time
+                                        $scope.updateChart()
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        }
+
         $scope.resource = resource
 
         $scope.chart = {}
         $scope.updateChart()
+
+        var broker = Stomp.over(new SockJS("/stomp"))
+        broker.debug = function (message) {
+//            console.log(message)
+        }
+
+        broker.connect({}, function () {
+            broker.subscribe("/topic/timesheet/patch", function (content) {
+//          broker.subscribe("/user/queue/timesheet/patch", function(content) {
+                $scope.$apply(function () {
+                    $scope.patchTimesheet(JSON.parse(content.body));
+                })
+            })
+        })
     }])
 })()

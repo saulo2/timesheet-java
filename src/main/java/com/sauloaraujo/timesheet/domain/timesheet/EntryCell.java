@@ -6,7 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EntryCell {
-	private int id;
+	private int column;
 	private Double time;
 	private boolean disabled;
 }

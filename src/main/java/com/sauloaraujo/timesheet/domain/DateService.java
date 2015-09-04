@@ -19,5 +19,5 @@ public class DateService {
 	
 	public boolean sameDay(Date date1, Date date2) {
 		return midnight(date1).equals(midnight(date2));
-	}
+	}	
 }

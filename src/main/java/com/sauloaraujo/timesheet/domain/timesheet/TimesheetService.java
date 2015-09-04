@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.sauloaraujo.timesheet.domain.CalendarService;
 import com.sauloaraujo.timesheet.domain.DateService;
@@ -25,6 +25,7 @@ public class TimesheetService {
 	private @Autowired TaskRepository taskRepository;	
 	private @Autowired CalendarService calendarService;
 	private @Autowired DateService dateService;
+	private @Autowired ApplicationEventPublisher publisher;
 	
 	public Timesheet get(Date start, int days) {
 		List<Date> dates = new ArrayList<>();
@@ -43,9 +44,9 @@ public class TimesheetService {
 			List<TaskRow> taskRows = new ArrayList<>();
 			for (Task task : project.getTasks()) {
 				List<EntryCell> entryCells = new ArrayList<>();				
-				for (int id = 0; id < dates.size(); ++id) {
+				for (int column = 0; column < dates.size(); ++column) {
 					Double time = null;
-					Date date = dates.get(id);					
+					Date date = dates.get(column);					
 					for (Entry entry : entries) {
 						if (entry.getProject().getId().equals(project.getId())
 								&& entry.getTask().getId().equals(task.getId())
@@ -55,7 +56,7 @@ public class TimesheetService {
 					}
 
 					EntryCell entryCell = new EntryCell();
-					entryCell.setId(id);
+					entryCell.setColumn(column);
 					entryCell.setTime(time);
 					entryCell.setDisabled(date.compareTo(dateService.midnight(project.getStartDate())) < 0);
 					entryCells.add(entryCell);
@@ -81,21 +82,20 @@ public class TimesheetService {
 		return timesheet;
 	}
 
-	@Transactional
 	public void patch(Date start, Timesheet timesheet) {
 		List<Entry> entries = new ArrayList<>();
 		for (ProjectRow projectRow : timesheet.getProjectRows()) {
 			for (TaskRow taskRow : projectRow.getTaskRows()) {
 				for (EntryCell entryCell : taskRow.getEntryCells()) {
 					Calendar calendar = calendarService.midnight(start);
-					calendar.add(Calendar.DATE, entryCell.getId());
+					calendar.add(Calendar.DATE, entryCell.getColumn());
 					Date date = calendar.getTime();
 					Entry entry = entryRepository.findByProjectIdAndTaskIdAndDate(projectRow.getId(), taskRow.getId(), date);
 					if (entry == null) {
 						entry = new Entry();
 						entry.setProject(projectRepository.findOne(projectRow.getId()));
 						entry.setTask(taskRepository.findOne(taskRow.getId()));
-						entry.setDate(date);						
+						entry.setDate(date);
 					}
 					entry.setTime(entryCell.getTime());
 					entries.add(entry);
@@ -103,5 +103,12 @@ public class TimesheetService {
 			}
 		}
 		entryRepository.save(entries);
+ 
+		List<Date> dates = new ArrayList<>();
+		dates.add(start);		
+		timesheet.setDates(dates);
+		TimesheetPatchedEvent event = new TimesheetPatchedEvent(this);
+		event.setTimesheet(timesheet);
+		publisher.publishEvent(event);
 	}
 }
