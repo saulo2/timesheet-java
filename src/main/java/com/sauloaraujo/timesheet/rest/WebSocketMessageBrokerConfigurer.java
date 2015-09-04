@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
+public class WebSocketMessageBrokerConfigurer extends AbstractWebSocketMessageBrokerConfigurer {
 	public static final String QUEUE = "/queue";
 	public static final String TOPIC = "/topic";
 	

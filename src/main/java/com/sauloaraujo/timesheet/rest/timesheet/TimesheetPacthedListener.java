@@ -6,7 +6,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 import com.sauloaraujo.timesheet.domain.timesheet.TimesheetPatchedEvent;
-import com.sauloaraujo.timesheet.rest.WebSocketConfiguration;
+import com.sauloaraujo.timesheet.rest.WebSocketMessageBrokerConfigurer;
 
 @Component
 public class TimesheetPacthedListener implements ApplicationListener<TimesheetPatchedEvent> {
@@ -15,6 +15,6 @@ public class TimesheetPacthedListener implements ApplicationListener<TimesheetPa
 	@Override
 	public void onApplicationEvent(TimesheetPatchedEvent event) {
 //		template.convertAndSendToUser(SecurityContextHolder.getContext().getAuthentication().getName(), WebSocketConfiguration.QUEUE + "/timesheet/patch", event.getTimesheet());
-		template.convertAndSend(WebSocketConfiguration.TOPIC + "/timesheet/patch", event.getTimesheet());					
+		template.convertAndSend(WebSocketMessageBrokerConfigurer.TOPIC + "/timesheet/patch", event.getTimesheet());					
 	}	
 }
