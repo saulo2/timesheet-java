@@ -1,7 +1,9 @@
 (function () {
-    var timesheetModule = angular.module("timesheetModule", ["angular-hal", "angular-search-box", "hateoasModule", "ngRoute", "sticky", "ui.utils.masks"])
+    "use strict"
 
-    timesheetModule.config(["$routeProvider", function ($routeProvider, $sceProvider) {
+    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+
+    timesheet.config(["$routeProvider", function ($routeProvider, $sceProvider) {
         var resolve = {
             resource: ["halClient", "$location", function (halClient, $location) {
                 return halClient.$get($location.url().substring(1))
@@ -9,8 +11,7 @@
         }
 
         $routeProvider
-            .when("/", {
-            })
+            .when("/", {})
             .when("/" + document.location.origin + "/api/projects/search/options/form", {
                 controller: "projectSearchOptionsFormController",
                 resolve: resolve,
@@ -34,12 +35,15 @@
             .when("/ok", {
                 templateUrl: "html/ok.html"
             })
+            .when("/notFound", {
+                templateUrl: "html/notFound.html"
+            })
             .otherwise({
-                redirectTo:"/"
+                redirectTo: "/notFound"
             })
     }])
 
-    timesheetModule.controller("rootController", ["halClient", "$routeParams", "$scope", function (halClient, $routeParams, $scope) {
+    timesheet.controller("rootController", ["halClient", "$routeParams", "$scope", function (halClient, $routeParams, $scope) {
         $scope.$routeParams = $routeParams
 
         halClient.$get("/api").then(function (resource) {
@@ -47,7 +51,7 @@
         })
     }])
 
-    timesheetModule.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
+    timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
         $scope.resource = resource
 
         resource.$get("tasks").then(function (tasks) {
@@ -62,7 +66,7 @@
         }
     }])
 
-    timesheetModule.controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
+    timesheet.controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
         $scope.resource = resource
 
         $scope.rels = []
@@ -77,17 +81,17 @@
         resource.$get("projects").then(function (projects) {
             $scope.projects = projects
         })
-        
-        $scope.getLinkClass = function(rel) {
-            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {                
+
+        $scope.getLinkClass = function (rel) {
+            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {
                 return "active"
             } else {
-                return null 
+                return null
             }
         }
     }])
 
-    timesheetModule.controller("projectFormController", ["$location", "$routeParams", "$scope", "resource", function ($location, $routeParams, $scope, resource) {
+    timesheet.controller("projectFormController", ["$location", "$routeParams", "$scope", "resource", function ($location, $routeParams, $scope, resource) {
         $scope.resource = resource
 
         resource.$get("project").then(function (project) {
@@ -140,7 +144,7 @@
             } else {
                 request = $scope.resource.$put
             }
-            request("save", null, $scope.project).then(function() {
+            request("save", null, $scope.project).then(function () {
                 $location.path("ok").search({
                     message: "Project successfully saved"
                 })
@@ -156,7 +160,105 @@
         }
     }])
 
-    timesheetModule.controller("timesheetController", ["$scope", "resource", function ($scope, resource) {
+    timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
         $scope.resource = resource
+
+        $scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
+            if ($event.keyCode == 13) {
+                $scope.resource.$patch("self", null, {
+                    projectRows: [{
+                        id: projectRow.id,
+                        taskRows: [{
+                            id: taskRow.id,
+                            entryCells: [{
+                                id: entryCell.id,
+                                time: entryCell.time
+                            }]
+                        }]
+                    }]
+                }).then(function () {
+                    $event.target.blur()
+                })
+            }
+        }
+
+        $scope.togglePinning = function ($event) {
+            $event.preventDefault()
+
+            $scope.pinning = !$scope.pinning
+        }
+
+        function getRowState(key) {
+            var state = localStorageService.get(key)
+            if (!state) {
+                state = {
+                    visible: true
+                }
+                localStorageService.set(key, state)
+            }
+            return state
+        }
+
+        function setRowState(key, state) {
+            localStorageService.set(key, state)
+        }
+
+        function toggleRowVisibility($event, key) {
+            $event.preventDefault()
+
+            var state = getRowState(key)
+            state.visible = !state.visible
+            setRowState(key, state)
+        }
+
+        function getProjectRowKey(projectRow) {
+            return JSON.stringify(projectRow.id)
+        }
+
+        $scope.getProjectRowState = function (projectRow) {
+            return getRowState(getProjectRowKey(projectRow))
+        }
+
+        $scope.toggleProjectRowVisibility = function ($event, projectRow) {
+            toggleRowVisibility($event, getProjectRowKey(projectRow))
+        }
+
+        function getTaskRowKey(projectRow, taskRow) {
+            return JSON.stringify([projectRow.id, taskRow.id])
+        }
+
+        $scope.getTaskRowState = function (projectRow, taskRow) {
+            return getRowState(getTaskRowKey(projectRow, taskRow))
+        }
+
+        $scope.toggleTaskRowVisibility = function ($event, projectRow, taskRow) {
+            toggleRowVisibility($event, getTaskRowKey(projectRow, taskRow))
+        }
+
+        $scope.filterProjectRow = function(projectRow) {
+            if ($scope.pinning || $scope.getProjectRowState(projectRow).visible) {
+                if ($scope.filteringProjectRow && $scope.projectNameSubstring) {
+                    return projectRow.project.toLowerCase().indexOf($scope.projectNameSubstring.toLowerCase()) >= 0
+                } else {
+                    return true
+                }
+            } else {
+                return false
+            }
+        }
+
+        $scope.filterTaskRow = function(projectRow) {
+            return function(taskRow) {
+                if ($scope.pinning || $scope.getTaskRowState(projectRow, taskRow).visible) {
+                    if ($scope.filteringTaskRow && $scope.taskNameSubstring) {
+                        return taskRow.task.toLowerCase().indexOf($scope.taskNameSubstring.toLowerCase()) >= 0
+                    } else {
+                        return true
+                    }
+                } else {
+                    return false
+                }
+            }
+        }
     }])
 })()

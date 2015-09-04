@@ -16,4 +16,8 @@ public class DateService {
 	public Date midnight(Date date) {
 		return calendarService.midnight(date).getTime();
 	}
+	
+	public boolean sameDay(Date date1, Date date2) {
+		return midnight(date1).equals(midnight(date2));
+	}
 }

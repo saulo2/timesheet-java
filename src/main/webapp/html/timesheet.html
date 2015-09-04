@@ -1,8 +1,9 @@
 <table class="table table-bordered timesheet" sticky>
     <thead>
         <tr>
-            <th rowspan="2">Project</th>
-            <th rowspan="2">Task</th>
+            <th colspan="2">
+                <a href="#" class="glyphicon glyphicon-pushpin pull-right" style="color: {{pinning ? '#337ab7' : '#777'}}" ng-click="togglePinning($event)"></a>
+            </th>
             <th colspan="{{resource.dates.length}}">
                 <a href="#{{resource.$href('previous')}}" class="glyphicon glyphicon-circle-arrow-left" ng-show="resource.$has('previous')"></a>
                 Date
@@ -14,6 +15,12 @@
             </th>
         </tr>
         <tr>
+            <th>
+                <search-box label="Project" model="projectNameSubstring" searching="filteringProjectRow"></search-box>
+            </th>
+            <th>
+                <search-box label="Task" model="taskNameSubstring" searching="filteringTaskRow"></search-box>
+            </th>
             <th ng-repeat="date in resource.dates">
                 {{date | date: "shortDate": "+00:00"}}
             </th>
@@ -22,12 +29,24 @@
 </table>
 
 <table class="table table-bordered timesheet">
-    <tbody ng-repeat="projectRow in resource.projectRows">
-        <tr ng-repeat="taskRow in projectRow.taskRows">
-            <td rowspan="{{projectRow.taskRows.length}}" ng-show="$first">{{projectRow.project}}</td>
-            <td>{{taskRow.task}}</td>
+    <tbody ng-repeat="projectRow in resource.projectRows | filter: filterProjectRow">
+        <tr ng-repeat="taskRow in projectRow.taskRows | filter: filterTaskRow(projectRow)">
+            <td rowspan="{{projectRow.taskRows.length}}" ng-show="$first">
+                {{projectRow.project}}
+                <a href="#"
+                   class="glyphicon glyphicon-pushpin pull-right"
+                   style="color: {{getProjectRowState(projectRow).visible ? '#337ab7' : '#777'}}; visibility: {{pinning ? 'visible' : 'hidden'}};"
+                   ng-click="toggleProjectRowVisibility($event, projectRow)"></a>
+            </td>
+            <td>
+                {{taskRow.task}}
+                <a href="#"
+                   class="glyphicon glyphicon-pushpin pull-right"
+                   style="color: {{getTaskRowState(projectRow, taskRow).visible ? '#337ab7' : '#777'}}; visibility: {{pinning ? 'visible' : 'hidden'}};"
+                   ng-click="toggleTaskRowVisibility($event, projectRow, taskRow)"></a>
+            </td>
             <td ng-repeat="entryCell in taskRow.entryCells">
-                <input type="text" ng-model="entryCell.time" ng-disabled="entryCell.disabled" ui-number-mask="1">
+                <input type="text" ng-model="entryCell.time" ng-disabled="entryCell.disabled" ng-keydown="saveEntryCell($event, projectRow, taskRow, entryCell)" ui-number-mask="1">
             </td>
         </tr>
     </tbody>

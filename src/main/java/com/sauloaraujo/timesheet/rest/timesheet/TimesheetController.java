@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,10 +52,15 @@ public class TimesheetController {
 		
 		if (days > 1) {
 			resource.add(linkTo(methodOn(TimesheetController.class).get(start, days - 1)).withRel("minus"));	
-		}		
+		}
 		
 		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days + 1)).withRel("plus"));
-		
+
 		return resource; 
+	}
+
+	@RequestMapping(method=RequestMethod.PATCH, value="/{start}")
+	public void patch(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestBody Timesheet timesheet) {
+		timesheetService.patch(start, timesheet);
 	}
 }

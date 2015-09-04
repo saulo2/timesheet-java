@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html ng-app="timesheetModule" lang="pt">
+<html ng-app="timesheet" lang="pt">
     <head>
         <meta charset="UTF-8"/>
 
@@ -9,6 +9,7 @@
         <script src="bower_components/angular-hal/angular-hal.js"></script>
         <script src="bower_components/angular-i18n/angular-locale_pt-br.js"></script>
         <script src="bower_components/angular-input-masks/angular-input-masks-standalone.min.js"></script>
+        <script src="bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
         <script src="bower_components/angular-route/angular-route.min.js"></script>
         <script src="bower_components/angular-search-box/target/js/angular-search-box.min.js"></script>
         <script src="bower_components/ngSticky/dist/sticky.min.js"></script>
@@ -26,7 +27,7 @@
         <script src="js/timesheet.js"></script>
 
         <style>
-            a:hover {
+            a:hover, a:focus {
                 text-decoration: none;
             }
 
@@ -59,8 +60,8 @@
                 vertical-align: middle;
             }
 
-            .timesheet > thead > tr:nth-child(1) > th:nth-child(1),
-            .timesheet > thead > tr:nth-child(1) > th:nth-child(2),
+            .timesheet > thead > tr:nth-child(2) > th:nth-child(1),
+            .timesheet > thead > tr:nth-child(2) > th:nth-child(2),
             .timesheet > tbody > tr > td:nth-child(1),
             .timesheet > tbody > tr > td:nth-child(2)
             {
@@ -69,6 +70,8 @@
 
             .timesheet > tbody > tr > td > input[type=text] {
                 border: none;
+
+                text-align: center;
 
                 width: 100%;
             }
