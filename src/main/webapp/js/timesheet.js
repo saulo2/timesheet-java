@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
     timesheet.config(["$routeProvider", function ($routeProvider, $sceProvider) {
         var resolve = {
@@ -161,8 +161,6 @@
     }])
 
     timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
-        $scope.resource = resource
-
         $scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
             if ($event.keyCode == 13) {
                 $scope.resource.$patch("self", null, {
@@ -178,6 +176,7 @@
                     }]
                 }).then(function () {
                     $event.target.blur()
+                    $scope.updateChart()
                 })
             }
         }
@@ -260,5 +259,33 @@
                 }
             }
         }
+
+        $scope.toggleChartVisibility = function($event) {
+            $event.preventDefault()
+
+            $scope.chart.visible = !$scope.chart.visible
+        }
+
+        $scope.updateChart = function() {
+            $scope.chart.labels = _.map($scope.resource.projectRows, function(projectRow) {
+                return projectRow.project
+            })
+
+            $scope.chart.data = []
+            _.forEach($scope.resource.projectRows, function(projectRow) {
+                var time = 0
+                _.forEach(projectRow.taskRows, function(taskRow) {
+                    _.forEach(taskRow.entryCells, function(entryCell) {
+                        time += entryCell.time
+                    })
+                })
+                $scope.chart.data.push(time)
+            })
+        }
+
+        $scope.resource = resource
+
+        $scope.chart = {}
+        $scope.updateChart()
     }])
 })()
