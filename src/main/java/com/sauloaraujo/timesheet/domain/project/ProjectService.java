@@ -6,18 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BeanPropertyBindingResult;
 
+import com.sauloaraujo.timesheet.domain.BusinessException;
 import com.sauloaraujo.timesheet.domain.DateService;
-import com.sauloaraujo.timesheet.domain.Valid;
 import com.sauloaraujo.timesheet.domain.task.Task;
 
 @Service
-@Validated
 public class ProjectService {
 	private @Autowired ProjectRepositoryImpl repositoryCustom;
 	private @Autowired ProjectRepository repository;	
 	private @Autowired DateService dateService;
+	private @Autowired ProjectValidator validator;
 
 	public Project create() {
 		Project project = new Project();
@@ -26,7 +26,12 @@ public class ProjectService {
 		return project;
 	}
 
-	public Project save(@Valid Project project) {
+	public Project save(Project project) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(project, "project");
+        validator.validate(project, errors);
+        if (errors.hasErrors()) {
+        	throw new BusinessException(errors);
+        }
 		return repository.save(project);
 	}
 	
