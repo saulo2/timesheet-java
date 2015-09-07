@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "bootstrap", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    var timesheet = angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "bootstrap", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
     timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
         $scope.filterTasks = function (task) {
