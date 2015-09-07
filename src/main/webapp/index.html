@@ -24,9 +24,6 @@
         <script src="bower_components/ngSticky/dist/sticky.min.js"></script>
 
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-        <!--
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>
-        -->
         <script src="bower_components/jquery/dist/jquery.min.js"></script>
         <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
@@ -67,6 +64,10 @@
                 padding-top: 8px;
             }
 
+            .timesheet {
+                table-layout: fixed;
+            }
+
             .timesheet > thead > tr > th,
             .timesheet > tbody > tr > td {
                 background-color: white;
@@ -74,14 +75,6 @@
                 text-align: center;
 
                 vertical-align: middle;
-            }
-
-            .timesheet > thead > tr:nth-child(2) > th:nth-child(1),
-            .timesheet > thead > tr:nth-child(2) > th:nth-child(2),
-            .timesheet > tbody > tr > td:nth-child(1),
-            .timesheet > tbody > tr > td:nth-child(2)
-            {
-                width: 15%
             }
 
             .timesheet > tbody > tr > td > input[type=text] {
