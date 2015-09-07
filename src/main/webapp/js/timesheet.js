@@ -1,9 +1,35 @@
 (function () {
     "use strict"
 
-    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "bootstrap", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    timesheet.config(["$routeProvider", function ($routeProvider, $sceProvider) {
+    timesheet.factory("interceptors", ["$locale", "$rootScope", function($locale, $rootScope) {
+        return {
+            request: function (request) {
+                delete $rootScope.errors
+
+                if (!request.headers["Accept-Language"]) {
+                    var id = $locale.id
+                    var index = id.indexOf("-")
+                    if (index < 0) {
+                        request.headers["Accept-Language"] = id
+                    } else {
+                        request.headers["Accept-Language"] = id.substring(0, index) + "-" + id.substring(index + 1).toUpperCase()
+                    }
+                }
+                return request
+            },
+
+            responseError: function (response) {
+                $rootScope.errors = response.data
+                return response
+            }
+        }
+    }])
+
+    timesheet.config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
+        $httpProvider.interceptors.push("interceptors");
+
         var resolve = {
             resource: ["halClient", "$location", function (halClient, $location) {
                 return halClient.$get($location.url().substring(1))
@@ -44,7 +70,26 @@
             })
     }])
 
-    timesheet.controller("rootController", ["halClient", "$routeParams", "$scope", function (halClient, $routeParams, $scope) {
+    timesheet.controller("rootController", ["$locale", "$routeParams", "$scope", "halClient", function ($locale, $routeParams, $scope, halClient) {
+        $scope.hasError = function(field) {
+            return $scope.errors && _.some($scope.errors.errors, function(error) {
+                return error.field === field
+            })
+        }
+
+        $scope.getFormGroupClass = function (field) {
+            return {
+                "form-group": true,
+                "has-error": $scope.hasError(field)
+            }
+        }
+
+        $scope.getErrors = function (field) {
+            return $scope.errors && _.filter($scope.errors.errors, function(error) {
+                return error.field === field
+            })
+        }
+
         $scope.$routeParams = $routeParams
 
         halClient.$get("/api").then(function (resource) {

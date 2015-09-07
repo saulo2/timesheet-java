@@ -7,6 +7,7 @@ import org.springframework.validation.Validator;
 
 @Component
 public class ProjectValidator implements Validator {
+	private @Autowired ProjectRepository repository;
 	private @Autowired Validator validator;
 	
 	@Override
@@ -17,6 +18,11 @@ public class ProjectValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		validator.validate(target, errors);
-		errors.reject("Project name must be unique");
+
+		Project project = (Project) target;
+		String name = project.getName();
+		if (name != null && repository.findByNameIgnoreCase(name) != null) {
+			errors.rejectValue("name", "unique.name.project", new String[] {name}, "Project name must be unique");	
+		}		
 	}
 }

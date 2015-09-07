@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 
-import com.sauloaraujo.timesheet.domain.BusinessException;
 import com.sauloaraujo.timesheet.domain.DateService;
+import com.sauloaraujo.timesheet.domain.ErrorsException;
 import com.sauloaraujo.timesheet.domain.task.Task;
 
 @Service
@@ -30,7 +30,7 @@ public class ProjectService {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(project, "project");
         validator.validate(project, errors);
         if (errors.hasErrors()) {
-        	throw new BusinessException(errors);
+        	throw new ErrorsException(errors);
         }
 		return repository.save(project);
 	}
