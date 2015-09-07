@@ -6,13 +6,16 @@
     hateoas.directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
         return {
             link: function (scope, element, attrs) {
+                var action
+                attrs.$observe("action", function (newAction) {
+                    action = newAction
+                })
                 element.on("submit", function (event) {
                     event.preventDefault()
                     scope.$apply(function () {
                         var form = new URI("?" + $(element).serialize()).search(true)
                         $location.search(form).replace()
                         $timeout(function () {
-                            var action = scope.$eval(attrs.action)
                             var search = new URI(action).search(true)
                             _.forEach(form, function (value, name) {
                                 search[name] = value

@@ -3,100 +3,6 @@
 
     var timesheet = angular.module("timesheet", ["angular-hal", "angular-search-box", "bootstrap", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    timesheet.factory("interceptors", ["$locale", "$rootScope", function($locale, $rootScope) {
-        return {
-            request: function (request) {
-                delete $rootScope.errors
-
-                if (!request.headers["Accept-Language"]) {
-                    var id = $locale.id
-                    var index = id.indexOf("-")
-                    if (index < 0) {
-                        request.headers["Accept-Language"] = id
-                    } else {
-                        request.headers["Accept-Language"] = id.substring(0, index) + "-" + id.substring(index + 1).toUpperCase()
-                    }
-                }
-                return request
-            },
-
-            responseError: function (response) {
-                $rootScope.errors = response.data
-                return response
-            }
-        }
-    }])
-
-    timesheet.config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
-        $httpProvider.interceptors.push("interceptors");
-
-        var resolve = {
-            resource: ["halClient", "$location", function (halClient, $location) {
-                return halClient.$get($location.url().substring(1))
-            }]
-        }
-
-        $routeProvider
-            .when("/", {                
-            })
-            .when("/" + document.location.origin + "/api/projects/search/options/form", {
-                controller: "projectSearchOptionsFormController",
-                resolve: resolve,
-                templateUrl: "html/projectSearchOptionsForm.html"
-            })
-            .when("/" + document.location.origin + "/api/projects/search/result", {
-                controller: "projectSearchResultController",
-                resolve: resolve,
-                templateUrl: "html/projectSearchResult.html"
-            })
-            .when("/" + document.location.origin + "/api/projects/:id/form", {
-                controller: "projectFormController",
-                resolve: resolve,
-                templateUrl: "html/projectForm.html"
-            })
-            .when("/" + document.location.origin + "/api/timesheets/:start", {
-                controller: "timesheetController",
-                resolve: resolve,
-                templateUrl: "html/timesheet.html"
-            })
-            .when("/ok", {
-                templateUrl: "html/ok.html"
-            })
-            .when("/notFound", {
-                templateUrl: "html/notFound.html"
-            })
-            .otherwise({
-                redirectTo: "/notFound"
-            })
-    }])
-
-    timesheet.controller("rootController", ["$locale", "$routeParams", "$scope", "halClient", function ($locale, $routeParams, $scope, halClient) {
-        $scope.hasError = function(field) {
-            return $scope.errors && _.some($scope.errors.errors, function(error) {
-                return error.field === field
-            })
-        }
-
-        $scope.getFormGroupClass = function (field) {
-            return {
-                "form-group": true,
-                "has-error": $scope.hasError(field)
-            }
-        }
-
-        $scope.getErrors = function (field) {
-            return $scope.errors && _.filter($scope.errors.errors, function(error) {
-                return error.field === field
-            })
-        }
-
-        $scope.$routeParams = $routeParams
-
-        halClient.$get("/api").then(function (resource) {
-            $scope.resource = resource
-        })
-    }])
-
     timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
         $scope.filterTasks = function (task) {
             if ($scope.filteringTasks && $scope.taskNameSubstring) {
@@ -204,6 +110,10 @@
         resource.$get("tasks").then(function (tasks) {
             $scope.tasks = tasks
         })
+    }])
+
+    timesheet.controller("okController", ["$routeParams", "$scope", function ($routeParams, $scope) {
+        $scope.message = $routeParams.message
     }])
 
     timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
@@ -376,4 +286,100 @@
             })
         })
     }])
+
+    timesheet.config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
+        $httpProvider.interceptors.push("interceptors");
+
+        var resolve = {
+            resource: ["$location", "halClient", function ($location, halClient) {
+                return halClient.$get($location.url().substring(1))
+            }]
+        }
+
+        $routeProvider
+            .when("/", {})
+            .when("/" + document.location.origin + "/api/projects/search/options/form", {
+                controller: "projectSearchOptionsFormController",
+                resolve: resolve,
+                templateUrl: "html/projectSearchOptionsForm.html"
+            })
+            .when("/" + document.location.origin + "/api/projects/search/result", {
+                controller: "projectSearchResultController",
+                resolve: resolve,
+                templateUrl: "html/projectSearchResult.html"
+            })
+            .when("/" + document.location.origin + "/api/projects/:id/form", {
+                controller: "projectFormController",
+                resolve: resolve,
+                templateUrl: "html/projectForm.html"
+            })
+            .when("/" + document.location.origin + "/api/timesheets/:start", {
+                controller: "timesheetController",
+                resolve: resolve,
+                templateUrl: "html/timesheet.html"
+            })
+            .when("/ok", {
+                templateUrl: "html/ok.html",
+                controller: "okController"
+            })
+            .when("/notFound", {
+                templateUrl: "html/notFound.html"
+            })
+            .otherwise({
+                redirectTo: "/notFound"
+            })
+    }])
+
+    timesheet.factory("interceptors", ["$locale", "$rootScope", function ($locale, $rootScope) {
+        return {
+            request: function (request) {
+                delete $rootScope.errors
+
+                if (!request.headers["Accept-Language"]) {
+                    var id = $locale.id
+                    var index = id.indexOf("-")
+                    if (index < 0) {
+                        request.headers["Accept-Language"] = id
+                    } else {
+                        request.headers["Accept-Language"] = id.substring(0, index) + "-" + id.substring(index + 1).toUpperCase()
+                    }
+                }
+                return request
+            },
+
+            responseError: function (response) {
+                $rootScope.errors = response.data
+                return response
+            }
+        }
+    }])
+
+    angular.element(document).ready(function () {
+        var controller = ["$rootScope", "halClient", function ($rootScope, halClient) {
+            $rootScope.hasFieldError = function (field) {
+                return $rootScope.errors && _.some($rootScope.errors.fieldErrors, function (error) {
+                        return error.field === field
+                    })
+            }
+
+            $rootScope.getFormGroupClass = function (field) {
+                return {
+                    "form-group": true,
+                    "has-error": $rootScope.hasFieldError(field)
+                }
+            }
+
+            $rootScope.getFieldErrors = function (field) {
+                return $rootScope.errors && _.filter($rootScope.errors.fieldErrors, function (error) {
+                        return error.field === field
+                    })
+            }
+
+            halClient.$get("/api").then(function (resource) {
+                $rootScope.resource = resource
+            })
+        }]
+
+        angular.bootstrap(document, ["timesheet"]).invoke(controller)
+    })
 })()

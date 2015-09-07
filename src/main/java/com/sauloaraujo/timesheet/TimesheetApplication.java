@@ -13,7 +13,7 @@ public class TimesheetApplication {
 	@Bean
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
-		source.setBasename("messages");
+		source.setBasename("classpath:/messages");
 		return source;
 	}
 	

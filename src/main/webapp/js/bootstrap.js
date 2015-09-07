@@ -6,7 +6,7 @@
     bootstrap.directive("bootstrapFormGroup", [function ($scope) {
         var controller = ["$rootScope", "$scope", function ($rootScope, $scope) {
             $scope.hasError = function () {
-                return $rootScope.errors && _.some($rootScope.errors.errors, function (error) {
+                return $rootScope.errors && _.some($rootScope.errors.fieldErrors, function (error) {
                     return error.field === $scope.name
                 })
             }
@@ -19,7 +19,7 @@
             }
 
             $scope.getErrors = function () {
-                return $rootScope.errors && _.filter($rootScope.errors.errors, function (error) {
+                return $rootScope.errors && _.filter($rootScope.errors.fieldErrors, function (error) {
                     return error.field === $scope.name
                 })
             }
