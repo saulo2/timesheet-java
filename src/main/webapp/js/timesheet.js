@@ -1,15 +1,15 @@
 (function () {
     "use strict"
 
-    var timesheet = angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    timesheet.controller("rootController", ["$scope", "halClient", function($scope, halClient) {
+    angular.module("timesheet").controller("rootController", ["$scope", "halClient", function($scope, halClient) {
         halClient.$get("/api").then(function (resource) {
             $scope.resource = resource
         })
     }])
 
-    timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
+    angular.module("timesheet").controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
         $scope.filterTasks = function (task) {
             if ($scope.filteringTasks && $scope.taskNameSubstring) {
                 return task.name.toLowerCase().indexOf($scope.taskNameSubstring.toLowerCase()) >= 0
@@ -24,7 +24,7 @@
         })
     }])
 
-    timesheet.controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
+    angular.module("timesheet").controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
         $scope.getLinkClass = function (rel) {
             if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {
                 return "active"
@@ -49,7 +49,7 @@
         })
     }])
 
-    timesheet.controller("projectFormController", ["$location", "$routeParams", "$scope", "alertService", "resource", function ($location, $routeParams, $scope, alertService, resource) {
+    angular.module("timesheet").controller("projectFormController", ["$location", "$routeParams", "$scope", "alertService", "resource", function ($location, $routeParams, $scope, alertService, resource) {
         $scope.hasTask = function (task) {
             return hasTaskUri(task.$href("self"))
         }
@@ -120,7 +120,7 @@
         })
     }])
 
-    timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
+    angular.module("timesheet").controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
         $scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
             if ($event.keyCode == 13) {
                 $scope.resource.$patch("self", null, {
@@ -273,7 +273,9 @@
 
         $scope.resource = resource
 
-        $scope.chart = {}
+        $scope.chart = {
+            visible: true
+        }
         $scope.updateChart()
 
         var broker = Stomp.over(new SockJS("/stomp"))
@@ -291,7 +293,7 @@
         })
     }])
 
-    timesheet.config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
+    angular.module("timesheet").config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
         $httpProvider.interceptors.push("interceptors");
 
         var resolve = {
@@ -330,7 +332,7 @@
             })
     }])
 
-    timesheet.factory("interceptors", ["$locale", "alertService", "errorService", function ($locale, alertService, errorService) {
+    angular.module("timesheet").factory("interceptors", ["$locale", "alertService", "errorService", function ($locale, alertService, errorService) {
         return {
             request: function (request) {
                 alertService.clearAlerts()
