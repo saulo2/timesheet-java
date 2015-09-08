@@ -39,7 +39,7 @@
                 <input type="text" class="form-control" rows="5" ng-model="project.startDate" ui-date-mask/>
             </bootstrap-form-group>
 
-            <div ng-class="getFormGroupClass('tasks')">
+            <div bootstrap-form-group-class="tasks">
                 <label class="col-sm-2 control-label">
                     <search-box label="Tasks" model="taskNameSubstring" searching="filteringTasks"></search-box>
                 </label>
@@ -53,7 +53,7 @@
                             </div>
                         </div>
                     </div>
-                    <span class="help-block" ng-repeat="error in getErrors('tasks')">{{error.message}}</span>
+                    <bootstrap-form-group-errors name="tasks"></bootstrap-form-group-errors>
                 </div>
             </div>
 

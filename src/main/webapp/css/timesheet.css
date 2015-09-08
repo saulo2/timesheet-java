@@ -1,0 +1,54 @@
+a:hover, a:focus {
+    text-decoration: none;
+}
+
+search-box input[type=text] {
+    border: none;
+
+    padding: 0px;
+
+    text-align: inherit;
+}
+
+.checkboxes-panel {
+    margin-bottom: 0px;
+
+    max-height: 160px;
+
+    overflow-y: auto;
+}
+
+.checkboxes-panel > .panel-body {
+    padding-top: 8px;
+}
+
+.timesheet {
+    table-layout: fixed;
+}
+
+.timesheet > thead > tr > th,
+.timesheet > tbody > tr > td {
+    background-color: white;
+
+    text-align: center;
+
+    vertical-align: middle;
+}
+
+.timesheet > tbody > tr > td > input[type=text] {
+    border: none;
+
+    text-align: center;
+
+    width: 100%;
+}
+
+.timesheet-chart {
+    bottom: 0px;
+
+    margin-bottom: 0px;
+
+    position: fixed;
+
+    right: 0px;
+}

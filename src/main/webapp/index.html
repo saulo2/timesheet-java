@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" ng-app="timesheet">
     <head>
         <meta charset="UTF-8"/>
 
         <script src="bower_components/angularjs/angular.min.js"></script>
 
-        <link rel="stylesheet" href="../../../bower_components/angular-chart.js/dist/angular-chart.css"/>
-        <script src="../../../bower_components/Chart.js/Chart.min.js"></script>
-        <script src="../../../bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+        <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css"/>
+        <script src="bower_components/Chart.js/Chart.min.js"></script>
+        <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
 
         <script src="bower_components/rfc6570/rfc6570.js"></script>
         <script src="bower_components/angular-hal/angular-hal.js"></script>
@@ -35,68 +35,14 @@
         <script src="bower_components/stomp-websocket/lib/stomp.min.js"></script>
         <script src="bower_components/uri.js/src/URI.min.js"></script>
 
-        <script src="js/bootstrap.js"></script>
-        <script src="js/hateoas.js"></script>
+        <link rel="stylesheet" href="css/timesheet.css"/>
         <script src="js/timesheet.js"></script>
-
-        <style>
-            a:hover, a:focus {
-                text-decoration: none;
-            }
-
-            search-box input[type=text] {
-                border: none;
-
-                padding: 0px;
-
-                text-align: inherit;
-            }
-
-            .checkboxes-panel {
-                margin-bottom: 0px;
-
-                max-height: 160px;
-
-                overflow-y: auto;
-            }
-
-            .checkboxes-panel > .panel-body {
-                padding-top: 8px;
-            }
-
-            .timesheet {
-                table-layout: fixed;
-            }
-
-            .timesheet > thead > tr > th,
-            .timesheet > tbody > tr > td {
-                background-color: white;
-
-                text-align: center;
-
-                vertical-align: middle;
-            }
-
-            .timesheet > tbody > tr > td > input[type=text] {
-                border: none;
-
-                text-align: center;
-
-                width: 100%;
-            }
-
-            .timesheet-chart {
-                bottom: 0px;
-
-                margin-bottom: 0px;
-
-                position: fixed;
-
-                right: 0px;
-            }
-        </style>
+        <script src="js/alert.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script src="js/error.js"></script>
+        <script src="js/hateoas.js"></script>
     </head>
-    <body>
+    <body ng-controller="rootController">
         <nav class="navbar navbar-inverse navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
@@ -122,16 +68,8 @@
                 </ul>
             </div>
         </nav>
-
         <div class="container">
-            <div class="row" ng-repeat="error in errors.globalErrors">
-                <div class="col-sm-12">
-                    <div class="alert alert-danger text-center">
-                        {{error.message}}
-                    </div>
-                </div>
-            </div>
-
+            <bootstrap-alerts></bootstrap-alerts>
             <ng-view></ng-view>
         </div>
     </body>

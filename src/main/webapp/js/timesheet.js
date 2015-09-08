@@ -1,7 +1,13 @@
 (function () {
     "use strict"
 
-    var timesheet = angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "bootstrap", "chart.js", "hateoas", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    var timesheet = angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+
+    timesheet.controller("rootController", ["$scope", "halClient", function($scope, halClient) {
+        halClient.$get("/api").then(function (resource) {
+            $scope.resource = resource
+        })
+    }])
 
     timesheet.controller("projectSearchOptionsFormController", ["$scope", "resource", function ($scope, resource) {
         $scope.filterTasks = function (task) {
@@ -43,7 +49,7 @@
         })
     }])
 
-    timesheet.controller("projectFormController", ["$location", "$routeParams", "$scope", "resource", function ($location, $routeParams, $scope, resource) {
+    timesheet.controller("projectFormController", ["$location", "$routeParams", "$scope", "alertService", "resource", function ($location, $routeParams, $scope, alertService, resource) {
         $scope.hasTask = function (task) {
             return hasTaskUri(task.$href("self"))
         }
@@ -76,7 +82,8 @@
                 request = $scope.resource.$put
             }
             request("save", null, $scope.project).then(function () {
-                $location.path("ok").search({
+                alertService.addAlert({
+                    type: alertService.SUCCESS,
                     message: "Project successfully saved"
                 })
             })
@@ -84,9 +91,10 @@
 
         $scope.delete = function () {
             $scope.originalProject.$del("self").then(function () {
-                $location.path("ok").search({
+                alertService.addAlert({
+                    type: alertService.SUCCESS,
                     message: "Project successfully deleted"
-                }).replace()
+                })
             })
         }
 
@@ -110,10 +118,6 @@
         resource.$get("tasks").then(function (tasks) {
             $scope.tasks = tasks
         })
-    }])
-
-    timesheet.controller("okController", ["$routeParams", "$scope", function ($routeParams, $scope) {
-        $scope.message = $routeParams.message
     }])
 
     timesheet.controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
@@ -318,10 +322,6 @@
                 resolve: resolve,
                 templateUrl: "html/timesheet.html"
             })
-            .when("/ok", {
-                templateUrl: "html/ok.html",
-                controller: "okController"
-            })
             .when("/notFound", {
                 templateUrl: "html/notFound.html"
             })
@@ -330,11 +330,11 @@
             })
     }])
 
-    timesheet.factory("interceptors", ["$locale", "$rootScope", function ($locale, $rootScope) {
+    timesheet.factory("interceptors", ["$locale", "alertService", "errorService", function ($locale, alertService, errorService) {
         return {
             request: function (request) {
-                delete $rootScope.errors
-
+                alertService.clearAlerts()
+                errorService.clearErrors()
                 if (!request.headers["Accept-Language"]) {
                     var id = $locale.id
                     var index = id.indexOf("-")
@@ -348,38 +348,15 @@
             },
 
             responseError: function (response) {
-                $rootScope.errors = response.data
+                errorService.setErrors(response.data)
+                _.each(response.data.globalErrors, function(error) {
+                    alertService.addAlert({
+                        type: alertService.DANGER,
+                        message: error.message
+                    })
+                })
                 return response
             }
         }
     }])
-
-    angular.element(document).ready(function () {
-        var controller = ["$rootScope", "halClient", function ($rootScope, halClient) {
-            $rootScope.hasFieldError = function (field) {
-                return $rootScope.errors && _.some($rootScope.errors.fieldErrors, function (error) {
-                        return error.field === field
-                    })
-            }
-
-            $rootScope.getFormGroupClass = function (field) {
-                return {
-                    "form-group": true,
-                    "has-error": $rootScope.hasFieldError(field)
-                }
-            }
-
-            $rootScope.getFieldErrors = function (field) {
-                return $rootScope.errors && _.filter($rootScope.errors.fieldErrors, function (error) {
-                        return error.field === field
-                    })
-            }
-
-            halClient.$get("/api").then(function (resource) {
-                $rootScope.resource = resource
-            })
-        }]
-
-        angular.bootstrap(document, ["timesheet"]).invoke(controller)
-    })
 })()

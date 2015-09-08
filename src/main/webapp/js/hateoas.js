@@ -1,9 +1,7 @@
 (function () {
     "use strict"
 
-    var hateoas = angular.module("hateoas", [])
-
-    hateoas.directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
+    angular.module("timesheet").directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
         return {
             link: function (scope, element, attrs) {
                 var action
@@ -28,7 +26,7 @@
         }
     }])
 
-    hateoas.directive("hateoasValue", ["$route", function ($route) {
+    angular.module("timesheet").directive("hateoasValue", ["$route", function ($route) {
         return {
             link: function (scope, element, attrs) {
                 var value = $route.current.params[attrs.name]
@@ -39,7 +37,7 @@
         }
     }])
 
-    hateoas.directive("hateoasChecked", ["$route", function ($route) {
+    angular.module("timesheet").directive("hateoasChecked", ["$route", function ($route) {
         return {
             link: function (scope, element, attrs) {
                 attrs.$observe("value", function (value) {
