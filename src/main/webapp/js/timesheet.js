@@ -3,7 +3,7 @@
 
     angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    angular.module("timesheet").controller("rootController", ["$scope", "halClient", function($scope, halClient) {
+    angular.module("timesheet").controller("rootController", ["$scope", "halClient", function ($scope, halClient) {
         halClient.$get("/api").then(function (resource) {
             $scope.resource = resource
         })
@@ -293,45 +293,6 @@
         })
     }])
 
-    angular.module("timesheet").config(["$httpProvider", "$routeProvider", function ($httpProvider, $routeProvider) {
-        $httpProvider.interceptors.push("interceptors");
-
-        var resolve = {
-            resource: ["$location", "halClient", function ($location, halClient) {
-                return halClient.$get($location.url().substring(1))
-            }]
-        }
-
-        $routeProvider
-            .when("/", {})
-            .when("/" + document.location.origin + "/api/projects/search/options/form", {
-                controller: "projectSearchOptionsFormController",
-                resolve: resolve,
-                templateUrl: "html/projectSearchOptionsForm.html"
-            })
-            .when("/" + document.location.origin + "/api/projects/search/result", {
-                controller: "projectSearchResultController",
-                resolve: resolve,
-                templateUrl: "html/projectSearchResult.html"
-            })
-            .when("/" + document.location.origin + "/api/projects/:id/form", {
-                controller: "projectFormController",
-                resolve: resolve,
-                templateUrl: "html/projectForm.html"
-            })
-            .when("/" + document.location.origin + "/api/timesheets/:start", {
-                controller: "timesheetController",
-                resolve: resolve,
-                templateUrl: "html/timesheet.html"
-            })
-            .when("/notFound", {
-                templateUrl: "html/notFound.html"
-            })
-            .otherwise({
-                redirectTo: "/notFound"
-            })
-    }])
-
     angular.module("timesheet").factory("interceptors", ["$locale", "alertService", "errorService", function ($locale, alertService, errorService) {
         return {
             request: function (request) {
@@ -351,7 +312,7 @@
 
             responseError: function (response) {
                 errorService.setErrors(response.data)
-                _.each(response.data.globalErrors, function(error) {
+                _.each(response.data.globalErrors, function (error) {
                     alertService.addAlert({
                         type: alertService.DANGER,
                         message: error.message
@@ -360,5 +321,47 @@
                 return response
             }
         }
+    }])
+
+    angular.module("timesheet").config(["$httpProvider", "$routeProvider", "cfpLoadingBarProvider", function ($httpProvider, $routeProvider, cfpLoadingBarProvider) {
+        $httpProvider.interceptors.push("interceptors");
+
+        var resolve = {
+            resource: ["$location", "halClient", function ($location, halClient) {
+                return halClient.$get($location.url().substring(1))
+            }]
+        }
+
+        $routeProvider
+            .when("/", {})
+            .when("/" + document.location.origin + "/api/projects/search/options/form", {
+                controller: "projectSearchOptionsFormController",
+                resolve: resolve,
+                templateUrl: "html/project/searchOptionsForm.html"
+            })
+            .when("/" + document.location.origin + "/api/projects/search/result", {
+                controller: "projectSearchResultController",
+                resolve: resolve,
+                templateUrl: "html/project/searchResult.html"
+            })
+            .when("/" + document.location.origin + "/api/projects/:id/form", {
+                controller: "projectFormController",
+                resolve: resolve,
+                templateUrl: "html/project/form.html"
+            })
+            .when("/" + document.location.origin + "/api/timesheets/:start", {
+                controller: "timesheetController",
+                resolve: resolve,
+                templateUrl: "html/timesheet.html"
+            })
+            .when("/notFound", {
+                templateUrl: "html/notFound.html"
+            })
+            .otherwise({
+                redirectTo: "/notFound"
+            })
+
+        cfpLoadingBarProvider.includeSpinner = false
+        cfpLoadingBarProvider.latencyThreshold = 500
     }])
 })()

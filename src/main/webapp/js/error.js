@@ -20,14 +20,14 @@
 
         that.hasFieldErrors = function (field) {
             return errors && _.some(errors.fieldErrors, function (error) {
-                return error.field === field
-            })
+                    return error.field === field
+                })
         }
 
         that.getFieldErrors = function (field) {
             return errors && _.filter(errors.fieldErrors, function (error) {
-                return error.field === field
-            })
+                    return error.field === field
+                })
         }
 
         return that;

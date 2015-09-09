@@ -11,7 +11,7 @@
         return {
             controller: controller,
             scope: {},
-            templateUrl: "html/bootstrapAlerts.html"
+            templateUrl: "html/bootstrap/alerts.html"
         }
     }])
 
@@ -44,7 +44,7 @@
             scope: {
                 name: "@"
             },
-            templateUrl: "html/bootstrapFormGroupErrors.html"
+            templateUrl: "html/bootstrap/formGroupErrors.html"
         }
     }])
 
@@ -55,7 +55,7 @@
                 label: "@",
                 name: "@"
             },
-            templateUrl: "html/bootstrapFormGroup.html",
+            templateUrl: "html/bootstrap/formGroup.html",
             transclude: true
         }
     }])
