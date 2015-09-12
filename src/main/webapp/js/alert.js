@@ -46,6 +46,6 @@
             alerts = []
         }
 
-        return that;
+        return that
     }])
 })()

@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.timesheet;
+package com.sauloaraujo.timesheet.web.timesheet;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;

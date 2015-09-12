@@ -9,10 +9,10 @@
             </thead>
             <tbody>
             <tr ng-repeat="project in projects">
-                <td class="col-lg-11">
+                <td class="col-sm-11">
                     <a href="#{{project.$href('form')}}">{{project.name}}</a>
                 </td>
-                <td class="col-lg-1 text-center">
+                <td class="col-sm-1 text-center">
                     {{project.startDate | date: "shortDate"}}
                 </td>
             </tr>

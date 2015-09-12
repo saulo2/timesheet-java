@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.project;
+package com.sauloaraujo.timesheet.web.project;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -10,7 +10,7 @@ import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import com.sauloaraujo.timesheet.domain.project.Project;
-import com.sauloaraujo.timesheet.rest.task.TaskResourceAssembler;
+import com.sauloaraujo.timesheet.web.task.TaskResourceAssembler;
 
 @Component
 public class ProjectResourceAssembler extends ResourceAssemblerSupport<Project, ProjectResource> {

@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.task;
+package com.sauloaraujo.timesheet.web.task;
 
 import java.util.ArrayList;
 import java.util.List;

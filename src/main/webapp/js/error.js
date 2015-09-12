@@ -30,6 +30,6 @@
                 })
         }
 
-        return that;
+        return that
     }])
 })()

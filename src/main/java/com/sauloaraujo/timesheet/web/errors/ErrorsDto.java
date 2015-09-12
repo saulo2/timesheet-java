@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.errors;
+package com.sauloaraujo.timesheet.web.errors;
 
 import java.util.List;
 

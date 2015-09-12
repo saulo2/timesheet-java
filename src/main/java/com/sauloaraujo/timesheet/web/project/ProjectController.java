@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.project;
+package com.sauloaraujo.timesheet.web.project;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -22,7 +22,7 @@ import com.sauloaraujo.timesheet.domain.project.Project;
 import com.sauloaraujo.timesheet.domain.project.ProjectSearchOptions;
 import com.sauloaraujo.timesheet.domain.project.ProjectService;
 import com.sauloaraujo.timesheet.domain.task.TaskService;
-import com.sauloaraujo.timesheet.rest.task.TaskResourceAssembler;
+import com.sauloaraujo.timesheet.web.task.TaskResourceAssembler;
 
 @RestController
 @RequestMapping("/api/projects")

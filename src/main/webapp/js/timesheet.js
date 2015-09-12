@@ -3,7 +3,7 @@
 
     angular.module("timesheet", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    angular.module("timesheet").controller("rootController", ["$scope", "halClient", function ($scope, halClient) {
+    angular.module("timesheet").controller("rootController", ["$http", "$scope", "halClient", function ($http, $scope, halClient) {
         halClient.$get("/api").then(function (resource) {
             $scope.resource = resource
         })
@@ -90,6 +90,7 @@
         }
 
         $scope.delete = function () {
+            console.log($scope.originalProject.$href("self"))
             $scope.originalProject.$del("self").then(function () {
                 alertService.addAlert({
                     type: alertService.SUCCESS,
@@ -273,9 +274,7 @@
 
         $scope.resource = resource
 
-        $scope.chart = {
-            visible: true
-        }
+        $scope.chart = {}
         $scope.updateChart()
 
         var broker = Stomp.over(new SockJS("/stomp"))
@@ -293,7 +292,7 @@
         })
     }])
 
-    angular.module("timesheet").factory("interceptors", ["$locale", "alertService", "errorService", function ($locale, alertService, errorService) {
+    angular.module("timesheet").factory("interceptors", ["$locale", "alertService", "authenticationService", "errorService", function ($locale, alertService, authenticationService, errorService) {
         return {
             request: function (request) {
                 alertService.clearAlerts()
@@ -311,14 +310,29 @@
             },
 
             responseError: function (response) {
-                errorService.setErrors(response.data)
-                _.each(response.data.globalErrors, function (error) {
-                    alertService.addAlert({
-                        type: alertService.DANGER,
-                        message: error.message
-                    })
-                })
-                return response
+                if (response.status == 401) {
+                    if (!response.config.bypassAuthenticationInterceptor) {
+                        return authenticationService.$http(response.config)
+                    } else {
+                        return response;
+                    }
+                } else {
+                    if (response.data) {
+                        errorService.setErrors(response.data)
+                        _.each(response.data.globalErrors, function (error) {
+                            alertService.addAlert({
+                                type: alertService.DANGER,
+                                message: error.message
+                            })
+                        })
+                    } else {
+                        alertService.addAlert({
+                            type: alertService.DANGER,
+                            message: "An unknown error has occurred"
+                        })
+                    }
+                    return response
+                }
             }
         }
     }])
@@ -362,6 +376,5 @@
             })
 
         cfpLoadingBarProvider.includeSpinner = false
-        cfpLoadingBarProvider.latencyThreshold = 500
     }])
 })()

@@ -1,10 +1,10 @@
-package com.sauloaraujo.timesheet.rest.project;
+package com.sauloaraujo.timesheet.web.project;
 
 import java.util.List;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import com.sauloaraujo.timesheet.rest.task.TaskResource;
+import com.sauloaraujo.timesheet.web.task.TaskResource;
 
 import lombok.Getter;
 import lombok.Setter;

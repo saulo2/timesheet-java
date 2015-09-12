@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.timesheet;
+package com.sauloaraujo.timesheet.web.timesheet;
 
 import java.util.Date;
 import java.util.List;

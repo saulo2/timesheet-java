@@ -1,4 +1,4 @@
-package com.sauloaraujo.timesheet.rest.errors;
+package com.sauloaraujo.timesheet.web.errors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,22 @@ import com.sauloaraujo.timesheet.domain.ErrorsException;
 public class ErrorsExceptionAdvice {
 	private @Autowired MessageSource source;
 	
+	@ExceptionHandler(Throwable.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ErrorsDto handleThrowable(Locale locale, Throwable throwable) {
+		throwable.printStackTrace();
+		
+		ObjectErrorDto globalError = new ObjectErrorDto();
+		globalError.setMessage(throwable.getMessage());
+		
+		List<ObjectErrorDto> globalErrors = new ArrayList<>();
+		globalErrors.add(globalError);
+		
+		ErrorsDto errors = new ErrorsDto();
+		errors.setGlobalErrors(globalErrors);
+		return errors;
+	}
+
 	@ExceptionHandler(ErrorsException.class)
 	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 	public @ResponseBody ErrorsDto handleErrorsException(Locale locale, ErrorsException exception) {
