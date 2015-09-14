@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
+		exception.printStackTrace();
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 }

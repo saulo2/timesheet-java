@@ -1,5 +1,7 @@
 package com.sauloaraujo.timesheet.web.configuration.security;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,18 +13,19 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 @Configuration
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
-	private static final String USER = "USER";
-	
+	private @Autowired DataSource dataSource;
 	private @Autowired AuthenticationEntryPoint authenticationEntryPoint;
 	private @Autowired AuthenticationFailureHandler authenticationFailureHandler; 
-	private @Autowired AuthenticationSuccessHandler authenticationSuccessHandler; 
+	private @Autowired AuthenticationSuccessHandler authenticationSuccessHandler;	
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-			.inMemoryAuthentication()
+		auth.jdbcAuthentication().dataSource(dataSource);
+/*		
+ * 			.inMemoryAuthentication()
 				.withUser("k").password("k").roles(USER).and()
 				.withUser("s").password("s").roles(USER).and();
+*/				
 	}
 
 	@Override
