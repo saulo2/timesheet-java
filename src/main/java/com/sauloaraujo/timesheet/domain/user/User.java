@@ -26,13 +26,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class User implements Identifiable<String> {
-/*	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private Integer id; 
-*/	
-	
 	@Id
 	@Column(name="username")
 	@Size(max=50)
