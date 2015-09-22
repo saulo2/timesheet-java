@@ -3,13 +3,16 @@ package com.sauloaraujo.timesheet.web.project;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sauloaraujo.timesheet.domain.project.Project;
 import com.sauloaraujo.timesheet.domain.project.ProjectSearchOptions;
 import com.sauloaraujo.timesheet.domain.project.ProjectService;
+import com.sauloaraujo.timesheet.domain.task.Task;
 import com.sauloaraujo.timesheet.domain.task.TaskService;
 import com.sauloaraujo.timesheet.web.task.TaskResourceAssembler;
 
@@ -35,6 +39,7 @@ public class ProjectController {
 	private @Autowired TaskService taskService;
 	private @Autowired ProjectResourceAssembler projectAssembler;
 	private @Autowired TaskResourceAssembler taskAssembler;
+	private @Autowired PersistentEntityResourceAssembler assembler;
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/options/form")
 	public ResourceSupport getProjectSearchOptionsForm(
@@ -43,6 +48,13 @@ public class ProjectController {
 			@RequestParam(value="tasks", required=false) List<String> tasks) {
 		ProjectSearchOptionsFormResource resource = new ProjectSearchOptionsFormResource();
 		resource.get_embedded().setTasks(taskAssembler.toResources(taskService.findAll()));
+		
+		ArrayList<Resource<Object>> tasks2 = new ArrayList<>();
+		for (Task task : taskService.findAll()) {
+			tasks2.add(assembler.toResource(task));	
+		}
+		resource.get_embedded().setTasks2(tasks2);
+		
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(name, description, tasks)).withSelfRel());
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectSearchResults(name, description, tasks, FIRST_PAGE, DEFAULT_SIZE)).withRel("results"));
 		return resource;

@@ -29,12 +29,12 @@ public class ProjectResourceAssembler extends ResourceAssemblerSupport<Project, 
 	public ProjectResource toResource(String id, Project entity) {
 		ProjectResource resource = new ProjectResource();
 		BeanUtils.copyProperties(entity, resource);
-		resource.setTasks(taskAssembler.getUris(entity.getTasks()));		
+		resource.setTasks(taskAssembler.getUris(entity.getTasks()));
 		resource.add(links.linkToSingleResource(entity));
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectForm(id)).withRel("form"));
-		return resource;		
+		return resource;
 	}
-	
+
 	public Project toEntity(Integer id, ProjectResource resource) {
 		Project entity = toEntity(resource);
 		entity.setId(id);

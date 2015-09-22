@@ -2,6 +2,7 @@ package com.sauloaraujo.timesheet.web.project;
 
 import java.util.List;
 
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.sauloaraujo.timesheet.web.task.TaskResource;
@@ -16,6 +17,7 @@ public class ProjectSearchOptionsFormResource extends ResourceSupport {
 	@Getter	
 	public static class Embedded {
 		private List<TaskResource> tasks;
+		private List<Resource<Object>> tasks2;
 	}
 
 	private Embedded _embedded = new Embedded();
