@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheet").directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
+    angular.module("timesheetModule").directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
         return {
             link: function (scope, element, attrs) {
                 var action
@@ -26,7 +26,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("hateoasValue", ["$route", function ($route) {
+    angular.module("timesheetModule").directive("hateoasValue", ["$route", function ($route) {
         return {
             link: function (scope, element, attrs) {
                 var value = $route.current.params[attrs.name]
@@ -37,7 +37,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("hateoasChecked", ["$route", function ($route) {
+    angular.module("timesheetModule").directive("hateoasChecked", ["$route", function ($route) {
         return {
             link: function (scope, element, attrs) {
                 attrs.$observe("value", function (value) {

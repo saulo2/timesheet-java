@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheet").directive("bootstrapAlerts", [function () {
+    angular.module("timesheetModule").directive("bootstrapAlerts", [function () {
         var controller = ["$scope", "alertService", function ($scope, alertService) {
             $scope.getAlerts = function () {
                 return alertService.getAlerts()
@@ -15,7 +15,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("bootstrapFormGroupClass", ["errorService", function (errorService) {
+    angular.module("timesheetModule").directive("bootstrapFormGroupClass", ["errorService", function (errorService) {
         return {
             link: function (scope, element, attrs) {
                 scope.$watch(function () {
@@ -31,7 +31,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("bootstrapFormGroupErrors", [function ($scope) {
+    angular.module("timesheetModule").directive("bootstrapFormGroupErrors", [function ($scope) {
         var controller = ["$scope", "errorService", function ($scope, errorService) {
             $scope.getFieldErrors = function () {
                 return errorService.getFieldErrors($scope.name)
@@ -48,7 +48,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("bootstrapFormGroup", [function ($scope) {
+    angular.module("timesheetModule").directive("bootstrapFormGroup", [function ($scope) {
         return {
             replace: true,
             scope: {

@@ -35,6 +35,29 @@ public class ProjectController {
 	private @Autowired TaskService taskService;
 	private @Autowired ProjectResourceAssembler projectAssembler;
 	private @Autowired TaskResourceAssembler taskAssembler;
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public Object post(@RequestBody ProjectResource project) {
+		projectService.save(projectAssembler.toEntity(project));
+		return null;
+	}	
+
+	@RequestMapping(method=RequestMethod.GET, value="/{id}")
+	public ProjectResource get(@PathVariable("id") int id) {
+		return projectAssembler.toResource(projectService.findOne(id));
+	}
+
+	@RequestMapping(method=RequestMethod.PUT, value="/{id}")
+	public Object put(@PathVariable("id") int id, @RequestBody ProjectResource project) {
+		projectService.save(projectAssembler.toEntity(id, project));
+		return null;
+	}
+
+	@RequestMapping(method=RequestMethod.DELETE, value="/{id}")
+	public Object delete(@PathVariable("id") int id) {
+		projectService.delete(id);
+		return null;
+	}	
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/options/form")
 	public ResourceSupport getProjectSearchOptionsForm(
@@ -86,28 +109,5 @@ public class ProjectController {
 		resource.get_embedded().setTasks(taskAssembler.toResources(taskService.findAll()));
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectForm(id)).withSelfRel());		
 		return resource;
-	}
-
-	@RequestMapping(method=RequestMethod.GET, value="/{id}")
-	public ProjectResource get(@PathVariable("id") int id) {
-		return projectAssembler.toResource(projectService.findOne(id));
-	}
-
-	@RequestMapping(method=RequestMethod.PUT, value="/{id}")
-	public Object put(@PathVariable("id") int id, @RequestBody ProjectResource project) {
-		projectService.save(projectAssembler.toEntity(id, project));
-		return null;
-	}
-
-	@RequestMapping(method=RequestMethod.POST)
-	public Object post(@RequestBody ProjectResource project) {
-		projectService.save(projectAssembler.toEntity(project));
-		return null;
-	}
-
-	@RequestMapping(method=RequestMethod.DELETE, value="/{id}")
-	public Object delete(@PathVariable("id") int id) {
-		projectService.delete(id);
-		return null;
-	}
+	}	
 }

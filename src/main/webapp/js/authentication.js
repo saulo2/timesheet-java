@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheet").factory("authenticationService", ["$httpParamSerializer", "$injector", "$q", function ($httpParamSerializer, $injector, $q) {
+    angular.module("timesheetModule").factory("authenticationService", ["$httpParamSerializer", "$injector", "$q", function ($httpParamSerializer, $injector, $q) {
         var authenticated
         var hasAuthenticationFailed
         var deferred
@@ -60,7 +60,7 @@
         return that
     }])
 
-    angular.module("timesheet").controller("authenticationController", ["$scope", "authenticationService", function ($scope, authenticationService) {
+    angular.module("timesheetModule").controller("authenticationController", ["$scope", "authenticationService", function ($scope, authenticationService) {
         $scope.authenticate = function (username, password) {
             authenticationService.authenticate(username, password)
         }
@@ -70,7 +70,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("authenticated", ["authenticationService", function (authenticationService) {
+    angular.module("timesheetModule").directive("authenticated", ["authenticationService", function (authenticationService) {
         var controller = ["$scope", function ($scope) {
             $scope.isAuthenticated = function () {
                 return authenticationService.isAuthenticated()
@@ -85,7 +85,7 @@
         }
     }])
 
-    angular.module("timesheet").directive("nonAuthenticated", ["authenticationService", function (authenticationService) {
+    angular.module("timesheetModule").directive("nonAuthenticated", ["authenticationService", function (authenticationService) {
         var controller = ["$scope", function ($scope) {
             $scope.isAuthenticated = function () {
                 return authenticationService.isAuthenticated()

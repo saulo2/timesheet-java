@@ -1,4 +1,4 @@
-angular.module("timesheet").controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
+angular.module("timesheetModule").controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
 	$scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
 		if ($event.keyCode == 13) {
 			resource.$patch("self", null, {

@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheet").factory("alertService", [function () {
+    angular.module("timesheetModule").factory("alertService", [function () {
         var alerts = []
 
         var that = {

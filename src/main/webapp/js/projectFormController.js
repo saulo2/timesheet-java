@@ -1,4 +1,4 @@
-angular.module("timesheet").controller("projectFormController", ["$scope", "alertService", "resource", function ($scope, alertService, resource) {
+angular.module("timesheetModule").controller("projectFormController", ["$scope", "alertService", "resource", function ($scope, alertService, resource) {
 	$scope.hasTask = function (task) {
 		return hasTaskUri(task.$href("self"))
 	}
