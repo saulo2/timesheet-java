@@ -26,7 +26,7 @@
 
     angular.module("timesheet").controller("projectSearchResultController", ["$location", "$scope", "resource", function ($location, $scope, resource) {
         $scope.getLinkClass = function (rel) {
-            if (new URI($location.url().substring(1)).equals($scope.resource.$href(rel))) {
+            if (new URI($location.url().substring(1)).equals(resource.$href(rel))) {
                 return "active"
             } else {
                 return null
@@ -49,7 +49,7 @@
         })
     }])
 
-    angular.module("timesheet").controller("projectFormController", ["$location", "$routeParams", "$scope", "alertService", "resource", function ($location, $routeParams, $scope, alertService, resource) {
+    angular.module("timesheet").controller("projectFormController", ["$scope", "alertService", "resource", function ($scope, alertService, resource) {
         $scope.hasTask = function (task) {
             return hasTaskUri(task.$href("self"))
         }
@@ -76,10 +76,10 @@
 
         $scope.save = function () {
             var request
-            if ($routeParams.id === "new") {
-                request = $scope.resource.$post
+            if (resource.$has("delete")) {
+                request = resource.$put
             } else {
-                request = $scope.resource.$put
+                request = resource.$post                
             }
             request("save", null, $scope.project).then(function () {
                 alertService.addAlert({
@@ -90,7 +90,6 @@
         }
 
         $scope.delete = function () {
-            console.log($scope.originalProject.$href("self"))
             $scope.originalProject.$del("self").then(function () {
                 alertService.addAlert({
                     type: alertService.SUCCESS,
@@ -124,7 +123,7 @@
     angular.module("timesheet").controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
         $scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
             if ($event.keyCode == 13) {
-                $scope.resource.$patch("self", null, {
+                resource.$patch("self", null, {
                     projectRows: [{
                         id: projectRow.id,
                         taskRows: [{
@@ -228,12 +227,12 @@
         }
 
         $scope.updateChart = function () {
-            $scope.chart.labels = _.map($scope.resource.projectRows, function (projectRow) {
+            $scope.chart.labels = _.map(resource.projectRows, function (projectRow) {
                 return projectRow.project
             })
 
             $scope.chart.data = []
-            _.forEach($scope.resource.projectRows, function (projectRow) {
+            _.forEach(resource.projectRows, function (projectRow) {
                 var time = 0
                 _.forEach(projectRow.taskRows, function (taskRow) {
                     _.forEach(taskRow.entryCells, function (entryCell) {
@@ -255,11 +254,11 @@
             })
 
             function patchEntryCell(projectRowId, taskRowId, date, time) {
-                _.each($scope.resource.projectRows, function (projectRow) {
+                _.each(resource.projectRows, function (projectRow) {
                     if (projectRow.id === projectRowId) {
                         _.each(projectRow.taskRows, function (taskRow) {
                             if (taskRow.id === taskRowId) {
-                                _.each($scope.resource.dates, function (d, index) {
+                                _.each(resource.dates, function (d, index) {
                                     if (d === date) {
                                         taskRow.entryCells[index].time = time
                                         $scope.updateChart()
