@@ -58,7 +58,11 @@ public class TimesheetService {
 					EntryCell entryCell = new EntryCell();
 					entryCell.setColumn(column);
 					entryCell.setTime(time);
-					entryCell.setDisabled(date.compareTo(dateService.midnight(project.getStartDate())) < 0);
+					entryCell.setDisabled(
+						date.compareTo(dateService.midnight(project.getStartDate())) < 0
+						|| project.getEndDate() != null
+							&& date.compareTo(dateService.midnight(project.getEndDate())) > 0
+					);
 					entryCells.add(entryCell);
 				}
 
