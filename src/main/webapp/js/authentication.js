@@ -2,7 +2,7 @@
     "use strict"
 
     angular.module("timesheetModule").factory("authenticationService", ["$httpParamSerializer", "$injector", "$q", function ($httpParamSerializer, $injector, $q) {
-        var authenticated
+        var authenticated = true
         var hasAuthenticationFailed
         var deferred
 
