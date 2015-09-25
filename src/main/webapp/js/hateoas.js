@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheetModule").directive("hateoasAction", ["$location", "$timeout", function ($location, $timeout) {
+    angular.module("timesheetModule").directive("hateoasAction", ["$filter", "$location", "$timeout", function ($filter, $location, $timeout) {
         return {
             link: function (scope, element, attrs) {
                 var action
@@ -17,9 +17,10 @@
                             var search = new URI(action).search(true)
                             _.forEach(form, function (value, name) {
                                 search[name] = value
-                            })                      
-                            console.log(action, search)
-                            $location.hash(action).search(search)
+                            })
+                            $location
+                                .url($filter("hateoasHref")(new URI(action), true))
+                                .search(search)
                         })
                     })
                 })
@@ -50,14 +51,20 @@
         }
     }])
 
-    angular.module("timesheetModule").filter("hateoasResource", [function () {
-        return function(href) {
+    angular.module("timesheetModule").filter("hateoasHref", [function () {
+        return function(href, withoutHash) {
             if (href) {
                 var resource = new URI(href).resource()
                 if (resource.length > 0) {
                     var index = resource.indexOf("/", 1)
                     if (index > 0) {
-                        return "#" + resource.substring(index)
+                        resource = resource.substring(index)
+                        if (withoutHash) {
+                            return resource
+                        } else {
+                            return "#" + resource    
+                        }
+                        
                     }                                            
                 }
             }

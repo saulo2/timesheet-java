@@ -5,12 +5,12 @@
                 <a href="#" class="glyphicon glyphicon-pushpin pull-right" style="color: {{pinning ? '#337ab7' : '#777'}}" ng-click="togglePinning($event)"></a>
             </th>
             <th colspan="{{resource.dates.length}}">
-                <a href="#{{resource.$href('previous')}}" class="glyphicon glyphicon-circle-arrow-left" ng-show="resource.$has('previous')"></a>
+                <a href="{{resource.$href('previous') | hateoasHref}}" class="glyphicon glyphicon-circle-arrow-left" ng-show="resource.$has('previous')"></a>
                 Date
-                <a href="#{{resource.$href('next')}}" class="glyphicon glyphicon-circle-arrow-right" ng-show="resource.$has('next')"></a>
+                <a href="{{resource.$href('next') | hateoasHref}}" class="glyphicon glyphicon-circle-arrow-right" ng-show="resource.$has('next')"></a>
                 <span class="pull-right">
-                    <a href="#{{resource.$href('minus')}}" class="glyphicon glyphicon-minus-sign" ng-show="resource.$has('minus')"></a>
-                    <a href="#{{resource.$href('plus')}}" class="glyphicon glyphicon-plus-sign" ng-show="resource.$has('plus')"></a>
+                    <a href="{{resource.$href('minus') | hateoasHref}}" class="glyphicon glyphicon-minus-sign" ng-show="resource.$has('minus')"></a>
+                    <a href="{{resource.$href('plus') | hateoasHref}}" class="glyphicon glyphicon-plus-sign" ng-show="resource.$has('plus')"></a>
                 </span>
             </th>
         </tr>
