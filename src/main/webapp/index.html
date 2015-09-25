@@ -62,15 +62,15 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li ng-show="resource.$has('newProjectForm')">
-                                    <a href="#{{resource.$href('newProjectForm')}}">New</a>
+                                    <a href="{{resource.$href('newProjectForm') | hateoasResource}}">New</a>
                                 </li>
                                 <li ng-show="resource.$has('projectSearchOptionsForm')">
-                                    <a href="#{{resource.$href('projectSearchOptionsForm')}}">Search</a>
+                                    <a href="{{resource.$href('projectSearchOptionsForm') | hateoasResource}}">Search</a>
                                 </li>
                             </ul>
                         </li>
                         <li ng-show="resource.$has('timesheet')">
-                            <a href="#{{resource.$href('timesheet')}}">Timesheet</a>
+                            <a href="{{resource.$href('timesheet') | hateoasResource}}">Timesheet</a>
                         </li>
                     </ul>
                 </authenticated>

@@ -53,28 +53,28 @@
 
         var resolve = {
             resource: ["$location", "halClient", function ($location, halClient) {
-                return halClient.$get($location.url().substring(1))
+                return halClient.$get(document.location.origin + "/api" + $location.url())
             }]
         }
 
         $routeProvider
             .when("/", {})
-            .when("/" + document.location.origin + "/api/projects/search/options/form", {
+            .when("/projects/search/options/form", {
                 controller: "projectSearchOptionsFormController",
                 resolve: resolve,
                 templateUrl: "html/project/searchOptionsForm.html"
             })
-            .when("/" + document.location.origin + "/api/projects/search/result", {
+            .when("/projects/search/result", {
                 controller: "projectSearchResultController",
                 resolve: resolve,
                 templateUrl: "html/project/searchResult.html"
             })
-            .when("/" + document.location.origin + "/api/projects/:id/form", {
+            .when("/projects/:id/form", {
                 controller: "projectFormController",
                 resolve: resolve,
                 templateUrl: "html/project/form.html"
             })
-            .when("/" + document.location.origin + "/api/timesheets/:start", {
+            .when("/timesheets/:start", {
                 controller: "timesheetController",
                 resolve: resolve,
                 templateUrl: "html/timesheet.html"
@@ -82,9 +82,9 @@
             .when("/notFound", {
                 templateUrl: "html/notFound.html"
             })
-            .otherwise({
-                redirectTo: "/notFound"
-            })
+            // .otherwise({
+            //     redirectTo: "/notFound"
+            // })
 
         cfpLoadingBarProvider.includeSpinner = false
     }])

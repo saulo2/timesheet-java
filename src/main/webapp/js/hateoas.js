@@ -17,8 +17,9 @@
                             var search = new URI(action).search(true)
                             _.forEach(form, function (value, name) {
                                 search[name] = value
-                            })
-                            $location.url(action).search(search)
+                            })                      
+                            console.log(action, search)
+                            $location.hash(action).search(search)
                         })
                     })
                 })
@@ -46,6 +47,21 @@
                     }
                 })
             }
+        }
+    }])
+
+    angular.module("timesheetModule").filter("hateoasResource", [function () {
+        return function(href) {
+            if (href) {
+                var resource = new URI(href).resource()
+                if (resource.length > 0) {
+                    var index = resource.indexOf("/", 1)
+                    if (index > 0) {
+                        return "#" + resource.substring(index)
+                    }                                            
+                }
+            }
+            return href
         }
     }])
 })()
