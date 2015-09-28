@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -22,12 +21,15 @@ import com.sauloaraujo.timesheet.domain.DateService;
 import com.sauloaraujo.timesheet.domain.timesheet.Timesheet;
 import com.sauloaraujo.timesheet.domain.timesheet.TimesheetService;
 
+import ma.glasnost.orika.MapperFacade;
+
 @RestController
 @RequestMapping("/api/timesheets")
 public class TimesheetController {
 	private @Autowired DateService dateService;
 	private @Autowired CalendarService calendarService;
 	private @Autowired TimesheetService timesheetService;
+	private @Autowired MapperFacade mapperFacade;
 	
 	@RequestMapping(method=RequestMethod.GET, value="/today")
 	public TimesheetResource get(@RequestParam(value="days") int days) {
@@ -37,8 +39,7 @@ public class TimesheetController {
 	@RequestMapping(method=RequestMethod.GET, value="/{start}")
 	public TimesheetResource get(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestParam(value="days") int days) {
 		Timesheet timesheet = timesheetService.get(start, days); 
-		TimesheetResource resource = new TimesheetResource();
-		BeanUtils.copyProperties(timesheet, resource);
+		TimesheetResource resource = mapperFacade.map(timesheet, TimesheetResource.class);		
 		
 		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days)).withSelfRel());		
 		
@@ -60,7 +61,8 @@ public class TimesheetController {
 	}
 
 	@RequestMapping(method=RequestMethod.PATCH, value="/{start}")
-	public void patch(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestBody Timesheet timesheet) {
+	public void patch(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestBody TimesheetResource resource) {
+		Timesheet timesheet = mapperFacade.map(resource, Timesheet.class);
 		timesheetService.patch(start, timesheet);
 	}
 }

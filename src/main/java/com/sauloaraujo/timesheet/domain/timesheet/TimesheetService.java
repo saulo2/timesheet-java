@@ -67,15 +67,13 @@ public class TimesheetService {
 				}
 
 				TaskRow taskRow = new TaskRow();
-				taskRow.setId(task.getId());
-				taskRow.setTask(task.getName());
+				taskRow.setTask(task);
 				taskRow.setEntryCells(entryCells);
 				taskRows.add(taskRow);
 			}
 			
 			ProjectRow projectRow = new ProjectRow();
-			projectRow.setId(project.getId());
-			projectRow.setProject(project.getName());
+			projectRow.setProject(project);
 			projectRow.setTaskRows(taskRows);
 			projectRows.add(projectRow);
 		}
@@ -94,11 +92,11 @@ public class TimesheetService {
 					Calendar calendar = calendarService.midnight(start);
 					calendar.add(Calendar.DATE, entryCell.getColumn());
 					Date date = calendar.getTime();
-					Entry entry = entryRepository.findByProjectIdAndTaskIdAndDate(projectRow.getId(), taskRow.getId(), date);
+					Entry entry = entryRepository.findByProjectIdAndTaskIdAndDate(projectRow.getProject().getId(), taskRow.getTask().getId(), date);
 					if (entry == null) {
 						entry = new Entry();
-						entry.setProject(projectRepository.findOne(projectRow.getId()));
-						entry.setTask(taskRepository.findOne(taskRow.getId()));
+						entry.setProject(projectRepository.findOne(projectRow.getProject().getId()));
+						entry.setTask(taskRepository.findOne(taskRow.getTask().getId()));
 						entry.setDate(date);
 					}
 					entry.setTime(entryCell.getTime());
