@@ -1,9 +1,5 @@
 package com.sauloaraujo.timesheet.web.timesheet;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.util.Calendar;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sauloaraujo.timesheet.domain.CalendarService;
 import com.sauloaraujo.timesheet.domain.DateService;
 import com.sauloaraujo.timesheet.domain.timesheet.Timesheet;
 import com.sauloaraujo.timesheet.domain.timesheet.TimesheetService;
@@ -27,7 +22,6 @@ import ma.glasnost.orika.MapperFacade;
 @RequestMapping("/api/timesheets")
 public class TimesheetController {
 	private @Autowired DateService dateService;
-	private @Autowired CalendarService calendarService;
 	private @Autowired TimesheetService timesheetService;
 	private @Autowired MapperFacade mapperFacade;
 	
@@ -35,27 +29,11 @@ public class TimesheetController {
 	public TimesheetResource get(@RequestParam(value="days") int days) {
 		return get(dateService.midnight(), days);
 	}
-	
+
 	@RequestMapping(method=RequestMethod.GET, value="/{start}")
 	public TimesheetResource get(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestParam(value="days") int days) {
-		Timesheet timesheet = timesheetService.get(start, days); 
-		TimesheetResource resource = mapperFacade.map(timesheet, TimesheetResource.class);		
-		
-		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days)).withSelfRel());		
-		
-		Calendar calendar = calendarService.midnight(start);
-		calendar.add(Calendar.DATE, -days);
-		resource.add(linkTo(methodOn(TimesheetController.class).get(calendar.getTime(), days)).withRel("previous"));
-		
-		calendar = calendarService.midnight(start);
-		calendar.add(Calendar.DATE, days);
-		resource.add(linkTo(methodOn(TimesheetController.class).get(calendar.getTime(), days)).withRel("next"));
-		
-		if (days > 1) {
-			resource.add(linkTo(methodOn(TimesheetController.class).get(start, days - 1)).withRel("minus"));	
-		}
-		
-		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days + 1)).withRel("plus"));
+		Timesheet timesheet = timesheetService.get(start, days);
+		TimesheetResource resource = mapperFacade.map(timesheet, TimesheetResource.class);
 
 		return resource; 
 	}

@@ -28,7 +28,7 @@ public class TimesheetResource extends ResourceSupport {
 		public static class ProjectDto {
 			private Integer id;
 			private String name;
-		}		
+		}
 		
 		@Setter
 		@Getter
