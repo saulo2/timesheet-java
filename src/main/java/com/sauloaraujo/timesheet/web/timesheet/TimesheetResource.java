@@ -3,16 +3,15 @@ package com.sauloaraujo.timesheet.web.timesheet;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.hateoas.ResourceSupport;
-
 import com.sauloaraujo.timesheet.domain.timesheet.EntryCell;
+import com.sauloaraujo.timesheet.web.Resource;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class TimesheetResource extends ResourceSupport {
+public class TimesheetResource extends Resource {
 	private List<Date> dates;
 	private List<ProjectRowDto> projectRows;
 	

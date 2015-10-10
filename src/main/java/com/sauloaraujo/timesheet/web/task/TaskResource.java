@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TaskResource extends Resource {
-	private int id;
 	private String name;
 }

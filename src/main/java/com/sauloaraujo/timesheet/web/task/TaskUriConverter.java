@@ -15,7 +15,7 @@ import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
 @Component
-public class TaskUrlConverter extends BidirectionalConverter<Task, URI> {
+public class TaskUriConverter extends BidirectionalConverter<Task, URI> {
 	private @Autowired TaskService taskService;	
 
 	@Override

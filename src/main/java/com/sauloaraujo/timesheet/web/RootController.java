@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sauloaraujo.timesheet.domain.project.ProjectService;
 import com.sauloaraujo.timesheet.web.project.ProjectController;
 import com.sauloaraujo.timesheet.web.timesheet.TimesheetController;
 
@@ -19,7 +20,7 @@ public class RootController {
 	public ResourceSupport getRoot() {
 		ResourceSupport root = new ResourceSupport();
 		root.add(linkTo(methodOn(RootController.class).getRoot()).withSelfRel());
-		root.add(linkTo(methodOn(ProjectController.class).getProjectForm("new")).withRel("newProjectForm"));
+		root.add(linkTo(methodOn(ProjectController.class).getProjectForm(ProjectService.NEW_PROJECT_ID)).withRel("newProjectForm"));
 		root.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(null, null, null)).withRel("projectSearchOptionsForm"));
 		root.add(linkTo(methodOn(TimesheetController.class).get(7)).withRel("timesheet"));
 		return root;

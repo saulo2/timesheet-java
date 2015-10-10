@@ -11,13 +11,9 @@ public class TaskService {
 	
 	public Task findOne(int id) {
 		return repository.findOne(id);
-	}	
+	}
 	
 	public List<Task> findAll() {
 		return repository.findAll(); 
-	}
-
-	public List<Task> findAll(Iterable<Integer> ids) {
-		return repository.findAll(ids); 
 	}
 }

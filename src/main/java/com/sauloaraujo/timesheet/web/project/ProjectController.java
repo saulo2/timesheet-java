@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +22,7 @@ import com.sauloaraujo.timesheet.domain.project.ProjectSearchOptions;
 import com.sauloaraujo.timesheet.domain.project.ProjectService;
 import com.sauloaraujo.timesheet.domain.task.Task;
 import com.sauloaraujo.timesheet.domain.task.TaskService;
+import com.sauloaraujo.timesheet.web.Resource;
 import com.sauloaraujo.timesheet.web.task.TaskResource;
 
 import ma.glasnost.orika.MapperFacade;
@@ -39,15 +39,19 @@ public class ProjectController {
 
 	@RequestMapping(method=RequestMethod.POST)
 	public Object post(@RequestBody ProjectResource resource) {
-		Project project = new Project();
-		mapperFacade.map(resource, project);
-		projectService.save(project);
+		projectService.save(mapperFacade.map(resource, Project.class));
 		return null;
 	}
 
 	@RequestMapping(method=RequestMethod.GET, value="/{id}")
 	public ProjectResource get(@PathVariable("id") int id) {
-		return mapperFacade.map(projectService.findOne(id), ProjectResource.class);
+		Project project;
+		if (id == ProjectService.NEW_PROJECT_ID) {
+			project = projectService.create();
+		} else {
+			project = projectService.findOne(id); 
+		}		
+		return mapperFacade.map(project, ProjectResource.class);
 	}
 
 	@RequestMapping(method=RequestMethod.PUT, value="/{id}")
@@ -65,7 +69,7 @@ public class ProjectController {
 	}	
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/options/form")
-	public ResourceSupport getProjectSearchOptionsForm(
+	public Resource getProjectSearchOptionsForm(
 			@RequestParam(value="name", required=false) String name,
 			@RequestParam(value="description", required=false) String description,
 			@RequestParam(value="tasks", required=false) List<URI> tasks) {
@@ -101,18 +105,15 @@ public class ProjectController {
 	}
 
 	@RequestMapping(method=RequestMethod.GET, value="/{id}/form")
-	public ProjectFormResource getProjectForm(@PathVariable("id") String id) {
+	public ProjectFormResource getProjectForm(@PathVariable("id") int id) {
 		ProjectFormResource resource = new ProjectFormResource();
-		Project project;
-		if ("new".equals(id)) {
-			project = projectService.create();
+		if (id == ProjectService.NEW_PROJECT_ID) {
 			resource.add(linkTo(methodOn(ProjectController.class).post(null)).withRel("save"));
 		} else {
-			project = projectService.findOne(Integer.parseInt(id));
-			resource.add(linkTo(methodOn(ProjectController.class).put(project.getId(), null)).withRel("save"));
-			resource.add(linkTo(methodOn(ProjectController.class).delete(project.getId())).withRel("delete"));
+			resource.add(linkTo(methodOn(ProjectController.class).put(id, null)).withRel("save"));
+			resource.add(linkTo(methodOn(ProjectController.class).delete(id)).withRel("delete"));
 		}
-		resource.get_embedded().setProject(mapperFacade.map(project, ProjectResource.class));
+		resource.get_embedded().setProject(get(id));
 		resource.get_embedded().setTasks(mapperFacade.mapAsList(taskService.findAll(), TaskResource.class));
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectForm(id)).withSelfRel());		
 		return resource;
