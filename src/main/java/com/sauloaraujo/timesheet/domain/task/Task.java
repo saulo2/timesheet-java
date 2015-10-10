@@ -13,8 +13,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.hateoas.Identifiable;
-
 import com.sauloaraujo.timesheet.domain.entry.Entry;
 import com.sauloaraujo.timesheet.domain.project.Project;
 
@@ -25,11 +23,11 @@ import lombok.Setter;
 @Table(name="TAS_TASK")
 @Setter
 @Getter
-public class Task implements Identifiable<Integer> {
+public class Task {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="TAS_ID")
-	private Integer id;
+	private int id;
 	
 	@Column(name="TAS_NM")
 	@NotNull

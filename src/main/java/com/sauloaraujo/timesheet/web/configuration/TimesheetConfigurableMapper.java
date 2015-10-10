@@ -32,7 +32,7 @@ public class TimesheetConfigurableMapper extends ConfigurableMapper {
 	}
 		
 	@Override
-	protected void configure(MapperFactory factory) {
+	protected void configure(MapperFactory factory) { 
 		Map<String, Converter> converters = context.getBeansOfType(Converter.class);
 		for (Converter<?, ?> converter : converters.values()) {
 			factory.getConverterFactory().registerConverter(converter);
@@ -48,6 +48,6 @@ public class TimesheetConfigurableMapper extends ConfigurableMapper {
 			.field("task.id", "id")
 			.field("task.name", "task")
 			.byDefault()
-		.register();		
+		.register();
 	}
 }

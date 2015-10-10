@@ -1,12 +1,13 @@
 package com.sauloaraujo.timesheet.web.task;
 
-import org.springframework.hateoas.ResourceSupport;
+import com.sauloaraujo.timesheet.web.Resource;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class TaskResource extends ResourceSupport {
+public class TaskResource extends Resource {
+	private int id;
 	private String name;
 }

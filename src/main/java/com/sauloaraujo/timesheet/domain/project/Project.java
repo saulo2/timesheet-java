@@ -19,8 +19,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.hateoas.Identifiable;
-
 import com.sauloaraujo.timesheet.domain.entry.Entry;
 import com.sauloaraujo.timesheet.domain.task.Task;
 
@@ -34,11 +32,11 @@ import lombok.Setter;
 )
 @Setter
 @Getter
-public class Project implements Identifiable<Integer> {
+public class Project {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="PRO_ID")
-	private Integer id;
+	private int id;
 	
 	@Column(name="PRO_NM")
 	@NotNull

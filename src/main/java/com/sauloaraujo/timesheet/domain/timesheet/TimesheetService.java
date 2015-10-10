@@ -48,8 +48,8 @@ public class TimesheetService {
 					Double time = null;
 					Date date = dates.get(column);					
 					for (Entry entry : entries) {
-						if (entry.getProject().getId().equals(project.getId())
-								&& entry.getTask().getId().equals(task.getId())
+						if (entry.getProject().getId()== project.getId()
+								&& entry.getTask().getId() == task.getId()
 								&& dateService.sameDay(entry.getDate(), date)) {
 							time = entry.getTime();
 						}

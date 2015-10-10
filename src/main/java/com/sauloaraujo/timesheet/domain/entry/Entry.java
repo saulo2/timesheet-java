@@ -33,7 +33,7 @@ public class Entry {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ENT_ID")
-	private Integer id;
+	private int id;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="ENT_DT")

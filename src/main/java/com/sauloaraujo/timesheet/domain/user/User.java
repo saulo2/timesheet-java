@@ -13,8 +13,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.hateoas.Identifiable;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,13 +23,12 @@ import lombok.Setter;
 )
 @Setter
 @Getter
-public class User implements Identifiable<String> {
+public class User {
 	@Id
 	@Column(name="username")
 	@Size(max=50)
 	private String username;
-	
-	@Override
+
 	public String getId() {
 		return username;
 	}

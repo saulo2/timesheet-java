@@ -23,7 +23,7 @@ public class ProjectValidator implements Validator {
 		String name = project.getName();
 		if (name != null) {
 			Project databaseProject = repository.findByNameIgnoreCase(name);
-			if (databaseProject != null && !databaseProject.getId().equals(project.getId())) {
+			if (databaseProject != null && databaseProject.getId() != project.getId()) {
 				errors.rejectValue("name", "unique.name.project", new String[] {name}, "A project with this name already exists");
 			}
 		}

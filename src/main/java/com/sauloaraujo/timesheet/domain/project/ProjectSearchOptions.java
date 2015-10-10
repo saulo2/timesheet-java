@@ -2,6 +2,8 @@ package com.sauloaraujo.timesheet.domain.project;
 
 import java.util.List;
 
+import com.sauloaraujo.timesheet.domain.task.Task;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +12,5 @@ import lombok.Setter;
 public class ProjectSearchOptions {
 	private String name;
 	private String description;
-	private List<Integer> tasks;
+	private List<Task> tasks;
 }
