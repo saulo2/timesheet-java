@@ -151,7 +151,9 @@ angular.module("timesheetModule").controller("timesheetController", ["$scope", "
 
 	$scope.resource = resource
 
-	$scope.chart = {}
+	$scope.chart = {
+		visible: true
+	}
 	$scope.updateChart()
 
 	var broker = Stomp.over(new SockJS("/stomp"))
