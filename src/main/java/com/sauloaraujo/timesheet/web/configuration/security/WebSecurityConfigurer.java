@@ -30,6 +30,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         http
         	.csrf()
         		.disable()
+        	.headers().frameOptions()
+        		.disable()
         	.exceptionHandling()
         		.authenticationEntryPoint(authenticationEntryPoint)
         		.and()
