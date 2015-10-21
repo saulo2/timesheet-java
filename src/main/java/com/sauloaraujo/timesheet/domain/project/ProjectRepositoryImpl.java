@@ -23,7 +23,7 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 	}
 
 	@Override
-	public Page<Project> find(ProjectSearchOptions options, Pageable pageable) {
+	public Page<Project> findByOptions(ProjectSearchOptions options, Pageable pageable) {
 		JPQLQuery query = from(QProject.project);				
 		if (StringUtils.hasLength(options.getName())) {
 			query.where(QProject.project.name.containsIgnoreCase(options.getName()));

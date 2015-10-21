@@ -16,7 +16,6 @@ import com.sauloaraujo.timesheet.domain.task.Task;
 public class ProjectService {
 	public static final int NEW_PROJECT_ID = 0;
 	
-	private @Autowired ProjectRepositoryImpl repositoryCustom;
 	private @Autowired ProjectRepository repository;	
 	private @Autowired DateService dateService;
 	private @Autowired ProjectValidator validator;
@@ -46,6 +45,6 @@ public class ProjectService {
 	}
 
 	public Page<Project> find(ProjectSearchOptions options, Pageable pageable) {
-		return repositoryCustom.find(options, pageable);
+		return repository.findByOptions(options, pageable);
 	}
 }

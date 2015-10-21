@@ -4,5 +4,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProjectRepositoryCustom {
-	Page<Project> find(ProjectSearchOptions options, Pageable pageable);
+	Page<Project> findByOptions(ProjectSearchOptions options, Pageable pageable);
 }

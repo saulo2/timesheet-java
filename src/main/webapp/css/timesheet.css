@@ -43,26 +43,26 @@ search-box input[type=text] {
     width: 100%;
 }
 
-.timesheet-chart {
-    bottom: 0px;
-
-    margin-bottom: 0px;
-
-    position: fixed;
-
-    right: 0px;
+@media screen {
+    .timesheet-chart {
+        bottom: 0px;
+    
+        margin-bottom: 0px;
+    
+        position: fixed;
+    
+        right: 0px;    
+    }    
 }
 
-.sign-in {
-    background-color: #003399;
+@media screen and (max-width: 1024px) {
+    .timesheet-chart {
+        left: 0px;
+    }
+}
 
-    bottom: 0px;
-
-    left: 0px;
-
-    position: fixed;
-
-    right: 0px;
-
-    top: 0px;
+@media print {
+    nav {
+        display: none
+    }
 }
