@@ -3,7 +3,6 @@ package com.sauloaraujo.timesheet.web;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,8 +16,8 @@ import com.sauloaraujo.timesheet.web.timesheet.TimesheetController;
 @RequestMapping("/api")
 public class RootController {
 	@RequestMapping(method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResourceSupport getRoot() {
-		ResourceSupport root = new ResourceSupport();
+	public Resource getRoot() {
+		Resource root = new Resource();
 		root.add(linkTo(methodOn(RootController.class).getRoot()).withSelfRel());
 		root.add(linkTo(methodOn(ProjectController.class).getProjectForm(ProjectService.NEW_PROJECT_ID)).withRel("newProjectForm"));
 		root.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(null, null, null)).withRel("projectSearchOptionsForm"));

@@ -22,7 +22,6 @@ import com.sauloaraujo.timesheet.domain.project.ProjectSearchOptions;
 import com.sauloaraujo.timesheet.domain.project.ProjectService;
 import com.sauloaraujo.timesheet.domain.task.Task;
 import com.sauloaraujo.timesheet.domain.task.TaskService;
-import com.sauloaraujo.timesheet.web.Resource;
 import com.sauloaraujo.timesheet.web.task.TaskResource;
 
 import ma.glasnost.orika.MapperFacade;
@@ -69,7 +68,7 @@ public class ProjectController {
 	}	
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/options/form")
-	public Resource getProjectSearchOptionsForm(
+	public ProjectSearchOptionsFormResource getProjectSearchOptionsForm(
 			@RequestParam(value="name", required=false) String name,
 			@RequestParam(value="description", required=false) String description,
 			@RequestParam(value="tasks", required=false) List<URI> tasks) {

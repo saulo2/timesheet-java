@@ -1,5 +1,11 @@
 package com.sauloaraujo.timesheet.domain.project;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -7,10 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-
-import com.mysema.query.jpa.JPASubQuery;
-import com.mysema.query.jpa.JPQLQuery;
-import com.sauloaraujo.timesheet.domain.task.QTask;
 
 import ma.glasnost.orika.MapperFacade;
 
@@ -22,14 +24,15 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 		super(Project.class);
 	}
 
+/*	
 	@Override
 	public Page<Project> findByOptions(ProjectSearchOptions options, Pageable pageable) {
 		JPQLQuery query = from(QProject.project);				
 		if (StringUtils.hasLength(options.getName())) {
 			query.where(QProject.project.name.containsIgnoreCase(options.getName()));
 		}		
-		if (StringUtils.hasLength(options.getName())) {
-			query.where(QProject.project.name.containsIgnoreCase(options.getDescription()));
+		if (StringUtils.hasLength(options.getDescription())) {
+			query.where(QProject.project.description.containsIgnoreCase(options.getDescription()));
 		}		
 		if (options.getTasks() != null) {
 			query.where(
@@ -46,5 +49,42 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 		query.limit(pageable.getPageSize());
 		query.offset(pageable.getOffset());
 		return new PageImpl<Project>(query.list(QProject.project), pageable, total);
+	}
+*/
+
+	private @PersistenceContext EntityManager manager;
+	
+	public Page<Project> findByOptions(ProjectSearchOptions options, Pageable pageable) {
+		StringBuilder jpql = new StringBuilder("from Project p where 1 = 1");
+		
+		if (StringUtils.hasLength(options.getName())) {
+			jpql.append(" and p.name like :name");
+		}
+		if (StringUtils.hasLength(options.getDescription())) {
+			jpql.append(" and p.name like :description");
+		}
+		if (options.getTasks() != null) {
+			jpql.append(" and exists (select t from Task t where t member of p.tasks and t.id in (:tasks))");
+		}
+
+		long total = createQuery("select count(*) " + jpql, Long.class, options).getSingleResult();		
+		List<Project> content = createQuery("select p " + jpql, Project.class, options).getResultList();
+		return new PageImpl<Project>(content, pageable, total);
+	}
+
+	private <Result> TypedQuery<Result> createQuery(String jpql, Class<Result> resultClass, ProjectSearchOptions options) {
+		TypedQuery<Result> query = manager.createQuery(jpql, resultClass);
+
+		if (StringUtils.hasLength(options.getName())) {
+			query.setParameter("name", options.getName());
+		}
+		if (StringUtils.hasLength(options.getDescription())) {
+			query.setParameter("description", options.getDescription());
+		}
+		if (options.getTasks() != null) {
+			query.setParameter("tasks", mapperFacade.mapAsList(options.getTasks(), Integer.class));
+		}
+
+		return query;
 	}
 }
