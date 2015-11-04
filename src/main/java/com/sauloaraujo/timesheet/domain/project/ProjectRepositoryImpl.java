@@ -67,12 +67,12 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 			jpql.append(" and exists (select t from Task t where t member of p.tasks and t.id in (:tasks))");
 		}
 
-		long total = createQuery("select count(*) " + jpql, Long.class, options).getSingleResult();		
-		List<Project> content = createQuery("select p " + jpql, Project.class, options).getResultList();
+		long total = createQuery("select count(*) " + jpql, Long.class, options, null).getSingleResult();		
+		List<Project> content = createQuery("select p " + jpql + " order by p.name", Project.class, options, pageable).getResultList();
 		return new PageImpl<Project>(content, pageable, total);
 	}
 
-	private <Result> TypedQuery<Result> createQuery(String jpql, Class<Result> resultClass, ProjectSearchOptions options) {
+	private <Result> TypedQuery<Result> createQuery(String jpql, Class<Result> resultClass, ProjectSearchOptions options, Pageable pageable) {
 		TypedQuery<Result> query = manager.createQuery(jpql, resultClass);
 
 		if (StringUtils.hasLength(options.getName())) {
@@ -83,6 +83,11 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 		}
 		if (options.getTasks() != null) {
 			query.setParameter("tasks", mapperFacade.mapAsList(options.getTasks(), Integer.class));
+		}
+		
+		if (pageable != null) {
+			query.setFirstResult(pageable.getOffset());
+			query.setMaxResults(pageable.getPageSize());
 		}
 
 		return query;

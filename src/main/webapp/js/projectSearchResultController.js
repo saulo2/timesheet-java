@@ -1,6 +1,6 @@
 angular.module("timesheetModule").controller("projectSearchResultController", ["$filter", "$location", "$scope", "resource", function ($filter, $location, $scope, resource) {
 	$scope.getLinkClass = function (rel) {
-		if (new URI($location.url()).equals($filter("hateoasHref")(resource.$href(rel), true))) {
+		if (URI($location.url()).equals($filter("hateoasHref")(resource.$href(rel), true))) {
 			return "active"
 		} else {
 			return null

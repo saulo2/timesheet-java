@@ -11,15 +11,15 @@
                 element.on("submit", function (event) {
                     event.preventDefault()
                     scope.$apply(function () {
-                        var form = new URI("?" + $(element).serialize()).search(true)
+                        var form = URI("?" + $(element).serialize()).search(true)
                         $location.search(form).replace()
                         $timeout(function () {
-                            var search = new URI(action).search(true)
+                            var search = URI(action).search(true)
                             _.forEach(form, function (value, name) {
                                 search[name] = value
                             })
                             $location
-                                .url($filter("hateoasHref")(new URI(action), true))
+                                .url($filter("hateoasHref")(URI(action), true))
                                 .search(search)
                         })
                     })
@@ -54,7 +54,7 @@
     angular.module("timesheetModule").filter("hateoasHref", [function () {
         return function(href, withoutHash) {
             if (href) {
-                var resource = new URI(href).resource()
+                var resource = URI(href).resource()
                 if (resource.length > 0) {
                     var index = resource.indexOf("/", 1)
                     if (index > 0) {

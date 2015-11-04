@@ -3,7 +3,7 @@
 
     angular.module("timesheetModule", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
 
-    angular.module("timesheetModule").factory("interceptors", ["$locale", "alertService", "authenticationService", "errorService", function ($locale, alertService, authenticationService, errorService) {
+    angular.module("timesheetModule").factory("interceptors", ["$locale", "$q", "alertService", "authenticationService", "errorService", function ($locale, $q, alertService, authenticationService, errorService) {
         return {
             request: function (request) {
                 alertService.clearAlerts()
@@ -20,29 +20,31 @@
                 return request
             },
 
-            responseError: function (response) {
-                if (response.status == 401) {
-                    if (!response.config.bypassAuthenticationInterceptor) {
-                        return authenticationService.$http(response.config)
+            responseError: function (rejection) {
+                if (rejection.status == 401) {
+                    if (!rejection.config.bypassAuthenticationInterceptor) {
+                        return authenticationService.$http(rejection.config)
                     } else {
-                        return response;
+                        return $q.reject(rejection)
                     }
-                } else {
-                    if (response.data) {
-                        errorService.setErrors(response.data)
-                        _.each(response.data.globalErrors, function (error) {
+                } else {                    
+                    if (!rejection.config.ignoreErrors) {
+                        if (rejection.data) {
+                            errorService.setErrors(rejection.data)
+                            _.each(rejection.data.globalErrors, function (error) {
+                                alertService.addAlert({
+                                    type: alertService.DANGER,
+                                    message: error.message
+                                })
+                            })
+                        } else {
                             alertService.addAlert({
                                 type: alertService.DANGER,
-                                message: error.message
+                                message: "An unknown error has occurred"
                             })
-                        })
-                    } else {
-                        alertService.addAlert({
-                            type: alertService.DANGER,
-                            message: "An unknown error has occurred"
-                        })
+                        }                        
                     }
-                    return response
+                    return $q.reject(rejection)
                 }
             }
         }
@@ -82,9 +84,11 @@
             .when("/notFound", {
                 templateUrl: "html/notFound.html"
             })
-            // .otherwise({
-            //     redirectTo: "/notFound"
-            // })
+/*            
+            .otherwise({
+                redirectTo: "/notFound"
+            })
+*/            
 
         cfpLoadingBarProvider.includeSpinner = false
     }])

@@ -1,7 +1,7 @@
-angular.module("timesheetModule").controller("timesheetController", ["$scope", "localStorageService", "resource", function ($scope, localStorageService, resource) {
+angular.module("timesheetModule").controller("timesheetController", ["$http", "$scope", "localStorageService", "resource", function ($http, $scope, localStorageService, resource) {
 	$scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
 		if ($event.keyCode == 13) {
-			resource.$patch("self", null, {
+			var data = {
 				projectRows: [{
 					id: projectRow.id,
 					taskRows: [{
@@ -12,9 +12,21 @@ angular.module("timesheetModule").controller("timesheetController", ["$scope", "
 						}]
 					}]
 				}]
-			}).then(function () {
+			}
+
+//			resource.$patch("self", null, data)			
+			$http({
+				method: "PATCH",
+				url: resource.$href("self"),
+				data: data,
+				ignoreErrors: true
+			})
+			.then(function (response) {
+				entryCell.error = false
 				$event.target.blur()
 				$scope.updateChart()
+			}).catch(function (response) {
+				entryCell.error = true
 			})
 		}
 	}
