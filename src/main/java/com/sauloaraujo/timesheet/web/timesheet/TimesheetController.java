@@ -40,6 +40,7 @@ public class TimesheetController {
 
 	@RequestMapping(method=RequestMethod.PATCH, value="/{start}")
 	public void patch(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestBody TimesheetResource resource) {
+//		throw new RuntimeException();
 		Timesheet timesheet = mapperFacade.map(resource, Timesheet.class);
 		timesheetService.patch(start, timesheet);
 	}

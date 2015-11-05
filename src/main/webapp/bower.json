@@ -26,7 +26,7 @@
     "lodash": "~3.10.1",
     "matchmedia": "~0.2.0",
     "moment": "~2.10.6",
-    "ngSticky": "~1.7.9",
+    "ngSticky": "~1.8.6",
     "sockjs-client": "~1.0.3",
     "stomp-websocket": "~2.3.4",
     "uri.js": "~1.16.0"

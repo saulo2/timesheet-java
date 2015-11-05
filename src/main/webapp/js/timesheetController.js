@@ -8,12 +8,11 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 						id: taskRow.id,
 						entryCells: [{
 							column: entryCell.column,
-							time: entryCell.time
+							time: entryCell.newTime
 						}]
 					}]
 				}]
 			}
-
 //			resource.$patch("self", null, data)			
 			$http({
 				method: "PATCH",
@@ -22,11 +21,18 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 				ignoreErrors: true
 			})
 			.then(function (response) {
-				entryCell.error = false
+				entryCell.alert = {
+					type: "success",
+					message: "Saved"
+				}
+				entryCell.time = entryCell.newTime
 				$event.target.blur()
 				$scope.updateChart()
 			}).catch(function (response) {
-				entryCell.error = true
+				entryCell.alert = {
+					type: "danger",
+					message: "Error"
+				}
 			})
 		}
 	}
@@ -160,6 +166,23 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 			})
 		}
 	}
+	
+	$scope.handleBlur = function (entryCell) {
+		if (entryCell.newTime !== entryCell.time) {
+			entryCell.alert = {
+				type: "warning",
+				message: "Unsaved"
+			}
+		}
+	}
+	
+	_.each(resource.projectRows, function (projectRow) {
+		_.each(projectRow.taskRows, function (taskRow) {
+			_.each(taskRow.entryCells, function(entryCell) {
+				entryCell.newTime = entryCell.time
+			})
+		})
+	})
 
 	$scope.resource = resource
 
