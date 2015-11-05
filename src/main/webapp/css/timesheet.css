@@ -1,3 +1,21 @@
+.timesheet-alert {
+    border-radius: 0px; 
+    
+    position: absolute; 
+    
+    right: -1px;
+    
+    top: -1px; 
+}
+
+.timesheet-alert.ng-hide-add {
+    transition: all linear 1s;
+}
+
+.timesheet-alert.ng-hide {
+    opacity: 0;
+}
+
 a:hover, a:focus {
     text-decoration: none;
 }

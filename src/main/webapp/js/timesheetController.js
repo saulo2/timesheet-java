@@ -1,4 +1,4 @@
-angular.module("timesheetModule").controller("timesheetController", ["$http", "$scope", "localStorageService", "resource", function ($http, $scope, localStorageService, resource) {
+angular.module("timesheetModule").controller("timesheetController", ["$http", "$scope", "$timeout", "localStorageService", "resource", function ($http, $scope, $timeout, localStorageService, resource) {
 	$scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
 		if ($event.keyCode == 13) {
 			var data = {
@@ -24,7 +24,10 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 				entryCell.alert = {
 					type: "success",
 					message: "Saved"
-				}
+				}								
+				$timeout(function() {
+					entryCell.alert = null					
+				})
 				entryCell.time = entryCell.newTime
 				$event.target.blur()
 				$scope.updateChart()

@@ -53,7 +53,14 @@
                        ng-focus="handleFocus(entryCell)"
                        ng-blur="handleBlur(entryCell)"
                        ui-number-mask="1"/>
-                <span class="label label-{{entryCell.alert.type}}" style="border-radius: 0px; position: absolute; top: -1px; right: -1px" ng-show="entryCell.alert">{{entryCell.alert.message}}</span>
+                <span class="timesheet-alert label label-{{entryCell.alert.type}}" 
+                      ng-hide="entryCell.alert.type === 'success'">
+                    {{entryCell.alert.message}}
+                </span>
+                <span class="timesheet-alert label label-success" 
+                      ng-show="entryCell.alert.type === 'success'">
+                    Saved
+                </span>                
             </td>
         </tr>
     </tbody>

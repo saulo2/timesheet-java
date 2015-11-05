@@ -1,7 +1,7 @@
 (function () {
     "use strict"
 
-    angular.module("timesheetModule", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngRoute", "sticky", "ui.utils.masks"])
+    angular.module("timesheetModule", ["angular-hal", "angular-loading-bar", "angular-search-box", "chart.js", "LocalStorageModule", "ngAnimate", "ngRoute", "sticky", "ui.utils.masks"])
 
     angular.module("timesheetModule").factory("interceptors", ["$locale", "$q", "alertService", "authenticationService", "errorService", function ($locale, $q, alertService, authenticationService, errorService) {
         return {

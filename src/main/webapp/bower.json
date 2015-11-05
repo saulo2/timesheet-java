@@ -11,7 +11,7 @@
   ],
   "license": "GNU Affero General Public License",
   "dependencies": {
-    "Chart.js": "~1.0.1",
+    "angular-animate": "~1.4.7",
     "angular-chart.js": "~0.8.1",
     "angular-hal": "~0.1.5",
     "angular-i18n": "~1.4.5",
@@ -22,6 +22,7 @@
     "angular-search-box": "~1.0.0",
     "angularjs": "~1.4.4",
     "bootstrap": "~3.3.5",
+    "Chart.js": "~1.0.1",
     "font-awesome": "~4.4.0",
     "lodash": "~3.10.1",
     "matchmedia": "~0.2.0",
@@ -29,6 +30,6 @@
     "ngSticky": "~1.8.6",
     "sockjs-client": "~1.0.3",
     "stomp-websocket": "~2.3.4",
-    "uri.js": "~1.16.0"
+    "uri.js": "~1.16.0"    
   }
 }
