@@ -23,10 +23,10 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 			.then(function (response) {
 				entryCell.alert = {
 					type: "success",
-					message: "Saved"
+					message: "Saved"					
 				}								
 				$timeout(function() {
-					entryCell.alert = null					
+					entryCell.alert.hidden = true					
 				})
 				entryCell.time = entryCell.newTime
 				$event.target.blur()

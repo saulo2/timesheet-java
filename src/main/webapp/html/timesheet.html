@@ -54,13 +54,9 @@
                        ng-blur="handleBlur(entryCell)"
                        ui-number-mask="1"/>
                 <span class="timesheet-alert label label-{{entryCell.alert.type}}" 
-                      ng-hide="entryCell.alert.type === 'success'">
+                      ng-hide="entryCell.alert.hidden">
                     {{entryCell.alert.message}}
                 </span>
-                <span class="timesheet-alert label label-success" 
-                      ng-show="entryCell.alert.type === 'success'">
-                    Saved
-                </span>                
             </td>
         </tr>
     </tbody>
