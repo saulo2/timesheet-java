@@ -1,7 +1,0 @@
-{
-	"strict-ssl": false,
-    "directory": "bower_components",
-	"registry": "http://bower.bcnet.bcb.gov.br:5678",
-    "proxy":"http://cache:8080",
-    "https-proxy":"http://cache:8080"
-}

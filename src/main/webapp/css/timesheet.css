@@ -5,7 +5,9 @@
     
     right: -1px;
     
-    top: -1px; 
+    top: -1px;
+    
+    z-index: 1; 
 }
 
 .timesheet-alert.ng-hide-add {
@@ -14,6 +16,10 @@
 
 .timesheet-alert.ng-hide {
     opacity: 0;
+    
+    right: -11px;
+    
+    top: -11px;     
 }
 
 a:hover, a:focus {
@@ -76,7 +82,7 @@ search-box input[type=text] {
 @media screen and (max-width: 1024px) {
     .timesheet-chart {
         left: 0px;
-    }
+    }    
 }
 
 @media print {

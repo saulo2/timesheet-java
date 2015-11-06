@@ -1,6 +1,7 @@
 angular.module("timesheetModule").controller("timesheetController", ["$http", "$scope", "$timeout", "localStorageService", "resource", function ($http, $scope, $timeout, localStorageService, resource) {
 	$scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
 		if ($event.keyCode == 13) {
+			var time = typeof entryCell.newTime === 'number' ? entryCell.newTime : null
 			var data = {
 				projectRows: [{
 					id: projectRow.id,
@@ -8,7 +9,7 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 						id: taskRow.id,
 						entryCells: [{
 							column: entryCell.column,
-							time: entryCell.newTime
+							time: time
 						}]
 					}]
 				}]
@@ -28,7 +29,8 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 				$timeout(function() {
 					entryCell.alert.hidden = true					
 				})
-				entryCell.time = entryCell.newTime
+				entryCell.time = time
+				entryCell.newTime = time
 				$event.target.blur()
 				$scope.updateChart()
 			}).catch(function (response) {
@@ -135,7 +137,7 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 			var time = 0
 			_.forEach(projectRow.taskRows, function (taskRow) {
 				_.forEach(taskRow.entryCells, function (entryCell) {
-					time += entryCell.time
+					time += entryCell.time	
 				})
 			})
 			$scope.chart.data.push(time)

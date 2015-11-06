@@ -93,14 +93,20 @@ public class TimesheetService {
 					calendar.add(Calendar.DATE, entryCell.getColumn());
 					Date date = calendar.getTime();
 					Entry entry = entryRepository.findByProjectIdAndTaskIdAndDate(projectRow.getProject().getId(), taskRow.getTask().getId(), date);
-					if (entry == null) {
-						entry = new Entry();
-						entry.setProject(projectRepository.findOne(projectRow.getProject().getId()));
-						entry.setTask(taskRepository.findOne(taskRow.getTask().getId()));
-						entry.setDate(date);
+					if (entryCell.getTime() == null) {
+						if (entry != null) {
+							entryRepository.delete(entry);
+						}
+					} else {
+						if (entry == null) {
+							entry = new Entry();
+							entry.setProject(projectRepository.findOne(projectRow.getProject().getId()));
+							entry.setTask(taskRepository.findOne(taskRow.getTask().getId()));
+							entry.setDate(date);
+						}
+						entry.setTime(entryCell.getTime());
+						entries.add(entry);						
 					}
-					entry.setTime(entryCell.getTime());
-					entries.add(entry);
 				}
 			}
 		}
