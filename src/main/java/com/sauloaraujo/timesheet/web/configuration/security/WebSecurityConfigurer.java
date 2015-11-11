@@ -41,8 +41,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
             	.successHandler(authenticationSuccessHandler)            	
         		.and()
         	.authorizeRequests()
-    			.antMatchers(loginProcessingUrl).permitAll()
-            	.antMatchers("/api/**").authenticated()
+				.antMatchers(loginProcessingUrl).permitAll()
+//				.antMatchers("/api/**").authenticated()
         		.anyRequest().permitAll();
 	}
 }

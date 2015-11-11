@@ -4,7 +4,7 @@
 .settings
 
 # IntelliJ IDEA
-.iml
+*.iml
 
 # Maven
 target
