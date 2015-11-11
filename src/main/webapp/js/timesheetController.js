@@ -161,7 +161,18 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 						if (taskRow.id === taskRowId) {
 							_.each(resource.dates, function (d, index) {
 								if (d === date) {
-									taskRow.entryCells[index].time = time
+									var entryCell = taskRow.entryCells[index]; 
+									entryCell.time = time
+									entryCell.newTime = time
+									if (!entryCell.alert || entryCell.alert.message !== "Saved") {
+										entryCell.alert = {
+											type: "info",
+											message: "Updated"
+										}
+									}
+									$timeout(function() {
+										entryCell.alert.hidden = true					
+									})									
 									$scope.updateChart()
 								}
 							})
