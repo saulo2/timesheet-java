@@ -21,7 +21,8 @@ public class RootController {
 		root.add(linkTo(methodOn(RootController.class).getRoot()).withSelfRel());
 		root.add(linkTo(methodOn(ProjectController.class).getProjectForm(ProjectService.NEW_PROJECT_ID)).withRel("newProjectForm"));
 		root.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(null, null, null)).withRel("projectSearchOptionsForm"));
-		root.add(linkTo(methodOn(TimesheetController.class).get(7)).withRel("timesheet"));
+		//root.add(linkTo(methodOn(TimesheetsController.class).get(7)).withRel("timesheet"));
+		root.add(linkTo(methodOn(TimesheetController.class).get(null, null)).withRel("timesheet"));
 		return root;
 	}
 }

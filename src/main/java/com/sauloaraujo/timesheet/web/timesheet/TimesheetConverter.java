@@ -41,7 +41,9 @@ public class TimesheetConverter extends CustomConverter<Timesheet, TimesheetReso
 		}
 		
 		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days + 1)).withRel("plus"));
-		
+
+		resource.add(linkTo(methodOn(TimesheetController.class).patch(start, null)).withRel("save"));
+
 		return resource;
 	}
 }

@@ -76,19 +76,19 @@
                 resolve: resolve,
                 templateUrl: "html/project/form.html"
             })
-            .when("/timesheets/:start", {
+//            .when("/timesheets/:start", {
+            .when("/timesheet", {
                 controller: "timesheetController",
                 resolve: resolve,
+                reloadOnSearch: false,
                 templateUrl: "html/timesheet.html"
             })
             .when("/notFound", {
                 templateUrl: "html/notFound.html"
             })
-/*            
             .otherwise({
                 redirectTo: "/notFound"
             })
-*/            
 
         cfpLoadingBarProvider.includeSpinner = false
     }])

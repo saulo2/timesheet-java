@@ -1,4 +1,4 @@
-angular.module("timesheetModule").controller("timesheetController", ["$http", "$scope", "$timeout", "localStorageService", "resource", function ($http, $scope, $timeout, localStorageService, resource) {
+angular.module("timesheetModule").controller("timesheetController", ["$http", "$location", "$scope", "$timeout", "halClient", "localStorageService", "resource", function ($http, $location, $scope, $timeout, halClient, localStorageService, initialResource) {
 	$scope.saveEntryCell = function ($event, projectRow, taskRow, entryCell) {
 		if ($event.keyCode == 13) {
 			var time = typeof entryCell.newTime === 'number' ? entryCell.newTime : null
@@ -14,10 +14,10 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 					}]
 				}]
 			}
-//			resource.$patch("self", null, data)			
+//			$scope.resource.$patch("save", null, data)			
 			$http({
 				method: "PATCH",
-				url: resource.$href("self"),
+				url: $scope.resource.$href("save"),
 				data: data,
 				ignoreErrors: true
 			})
@@ -128,12 +128,12 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 	}
 
 	$scope.updateChart = function () {
-		$scope.chart.labels = _.map(resource.projectRows, function (projectRow) {
+		$scope.chart.labels = _.map($scope.resource.projectRows, function (projectRow) {
 			return projectRow.project
 		})
 
 		$scope.chart.data = []
-		_.forEach(resource.projectRows, function (projectRow) {
+		_.forEach($scope.resource.projectRows, function (projectRow) {
 			var time = 0
 			_.forEach(projectRow.taskRows, function (taskRow) {
 				_.forEach(taskRow.entryCells, function (entryCell) {
@@ -155,11 +155,11 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 		})
 
 		function patchEntryCell(projectRowId, taskRowId, date, time) {
-			_.each(resource.projectRows, function (projectRow) {
+			_.each($scope.resource.projectRows, function (projectRow) {
 				if (projectRow.id === projectRowId) {
 					_.each(projectRow.taskRows, function (taskRow) {
 						if (taskRow.id === taskRowId) {
-							_.each(resource.dates, function (d, index) {
+							_.each($scope.resource.dates, function (d, index) {
 								if (d === date) {
 									var entryCell = taskRow.entryCells[index]; 
 									entryCell.time = time
@@ -169,10 +169,10 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 											type: "info",
 											message: "Updated"
 										}
+										$timeout(function() {
+											entryCell.alert.hidden = true					
+										})
 									}
-									$timeout(function() {
-										entryCell.alert.hidden = true					
-									})									
 									$scope.updateChart()
 								}
 							})
@@ -191,21 +191,36 @@ angular.module("timesheetModule").controller("timesheetController", ["$http", "$
 			}
 		}
 	}
-	
-	_.each(resource.projectRows, function (projectRow) {
-		_.each(projectRow.taskRows, function (taskRow) {
-			_.each(taskRow.entryCells, function(entryCell) {
-				entryCell.newTime = entryCell.time
-			})
-		})
-	})
 
-	$scope.resource = resource
+
 
 	$scope.chart = {
 		visible: true
 	}
-	$scope.updateChart()
+
+	function setResource(resource) {		
+		_.each(resource.projectRows, function (projectRow) {
+			_.each(projectRow.taskRows, function (taskRow) {
+				_.each(taskRow.entryCells, function(entryCell) {
+					entryCell.newTime = entryCell.time
+				})
+			})
+		})
+		
+		$scope.resource = resource		
+		
+		$scope.updateChart()		
+	}
+	
+	setResource(initialResource)
+
+	$scope.$on("$routeUpdate", function () {
+		halClient.$get(document.location.origin + "/api" + $location.url()).then(function (resource) {
+			setResource(resource)	
+		})		
+	})
+
+
 
 	var broker = Stomp.over(new SockJS("/stomp"))
 	broker.debug = function (message) {

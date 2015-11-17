@@ -20,7 +20,7 @@ import ma.glasnost.orika.MapperFacade;
 
 @RestController
 @RequestMapping("/api/timesheets")
-public class TimesheetController {
+public class TimesheetsController {
 	private @Autowired DateService dateService;
 	private @Autowired TimesheetService timesheetService;
 	private @Autowired MapperFacade mapperFacade;
@@ -34,13 +34,11 @@ public class TimesheetController {
 	public TimesheetResource get(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestParam(value="days") int days) {
 		Timesheet timesheet = timesheetService.get(start, days);
 		TimesheetResource resource = mapperFacade.map(timesheet, TimesheetResource.class);
-
 		return resource; 
 	}
 
 	@RequestMapping(method=RequestMethod.PATCH, value="/{start}")
 	public void patch(@PathVariable("start") @DateTimeFormat(iso=ISO.DATE) Date start, @RequestBody TimesheetResource resource) {
-//		throw new RuntimeException();
 		Timesheet timesheet = mapperFacade.map(resource, Timesheet.class);
 		timesheetService.patch(start, timesheet);
 	}
