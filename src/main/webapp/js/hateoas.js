@@ -71,4 +71,16 @@
             return href
         }
     }])
+    
+    angular.module("timesheetModule").directive("hateoasA", [function () {
+        return {
+            replace: true,
+            scope: {
+                resource: "=",
+                rel: "@"
+            },
+            templateUrl: "html/hateoas/hateoasA.html", 
+            transclude: true
+        }            
+    }])
 })()

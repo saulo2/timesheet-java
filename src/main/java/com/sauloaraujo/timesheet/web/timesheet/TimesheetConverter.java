@@ -23,7 +23,7 @@ public class TimesheetConverter extends CustomConverter<Timesheet, TimesheetReso
 	public TimesheetResource convert(Timesheet source, Type<? extends TimesheetResource> destinationType) {
 		TimesheetResource resource = new TimesheetResource();
 		mapperFacade.map(source, resource);
-		
+
 		Date start = resource.getDates().get(0);
 		int days = resource.getDates().size();		
 		resource.add(linkTo(methodOn(TimesheetController.class).get(start, days)).withSelfRel());		

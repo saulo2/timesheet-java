@@ -31,7 +31,7 @@
         }
     }])
 
-    angular.module("timesheetModule").directive("bootstrapFormGroupErrors", [function ($scope) {
+    angular.module("timesheetModule").directive("bootstrapFormGroupErrors", [function () {
         var controller = ["$scope", "errorService", function ($scope, errorService) {
             $scope.getFieldErrors = function () {
                 return errorService.getFieldErrors($scope.name)
@@ -48,7 +48,7 @@
         }
     }])
 
-    angular.module("timesheetModule").directive("bootstrapFormGroup", [function ($scope) {
+    angular.module("timesheetModule").directive("bootstrapFormGroup", [function () {
         return {
             replace: true,
             scope: {
