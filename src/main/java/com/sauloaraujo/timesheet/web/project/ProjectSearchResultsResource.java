@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ProjectSearchResultsResource extends Resource {
+	private Integer pages;
+	
 	@Setter
 	@Getter	
 	public static class Embedded {

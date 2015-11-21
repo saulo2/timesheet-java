@@ -55,12 +55,13 @@
 
         var resolve = {
             resource: ["$location", "halClient", function ($location, halClient) {
-                return halClient.$get(document.location.origin + "/api" + $location.url())
+                return halClient.$get("/api" + $location.url())
             }]
         }
 
         $routeProvider
             .when("/", {})
+/*            
             .when("/projects/search/options/form", {
                 controller: "projectSearchOptionsFormController",
                 resolve: resolve,
@@ -71,12 +72,18 @@
                 resolve: resolve,
                 templateUrl: "html/project/searchResult.html"
             })
+*/
+            .when("/projects/search/options/form", {
+                controller: "projectSearchController",
+                resolve: resolve,
+                reloadOnSearch: false,
+                templateUrl: "html/project/search.html"                
+            })
             .when("/projects/:id/form", {
                 controller: "projectFormController",
                 resolve: resolve,
                 templateUrl: "html/project/form.html"
             })
-//            .when("/timesheets/:start", {
             .when("/timesheet", {
                 controller: "timesheetController",
                 resolve: resolve,

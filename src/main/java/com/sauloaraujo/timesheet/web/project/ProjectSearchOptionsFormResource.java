@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ProjectSearchOptionsFormResource extends Resource {
+	private Embedded _embedded = new Embedded();
+
 	@Setter
 	@Getter	
 	public static class Embedded {
 		private List<TaskResource> tasks;
 	}
-
-	private Embedded _embedded = new Embedded();
 }

@@ -10,13 +10,13 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ProjectFormResource extends Resource {
+public class ProjectFormResource extends Resource {	
+	private Embedded _embedded = new Embedded();
+	
 	@Setter
 	@Getter	
 	public static class Embedded {
 		private ProjectResource project;
 		private List<TaskResource> tasks;
 	}
-	
-	private Embedded _embedded = new Embedded();
 }

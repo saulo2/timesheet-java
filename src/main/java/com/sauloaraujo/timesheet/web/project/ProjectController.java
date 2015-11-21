@@ -4,12 +4,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.TemplateVariable;
+import org.springframework.hateoas.TemplateVariable.VariableType;
+import org.springframework.hateoas.TemplateVariables;
+import org.springframework.hateoas.UriTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +71,7 @@ public class ProjectController {
 	public Object delete(@PathVariable("id") int id) {
 		projectService.delete(id);
 		return null;
-	}	
+	}
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/options/form")
 	public ProjectSearchOptionsFormResource getProjectSearchOptionsForm(
@@ -76,7 +82,23 @@ public class ProjectController {
 		resource.get_embedded().setTasks(mapperFacade.mapAsList(taskService.findAll(), TaskResource.class));
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectSearchOptionsForm(name, description, tasks)).withSelfRel());
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectSearchResults(name, description, tasks, FIRST_PAGE, DEFAULT_SIZE)).withRel("results"));
+		resource.add(getProjectSearchResultsLink("anotherResults"));
 		return resource;
+	}
+	
+	private Link getProjectSearchResultsLink(String rel) {
+		String baseUri = linkTo(methodOn(getClass()).getProjectSearchResults(null, null, null, null, DEFAULT_SIZE)).toString(); 
+
+		List<TemplateVariable> variableList = new ArrayList<>();
+		variableList.add(new TemplateVariable("name", VariableType.REQUEST_PARAM));
+		variableList.add(new TemplateVariable("description", VariableType.REQUEST_PARAM));
+		variableList.add(new TemplateVariable("tasks", VariableType.REQUEST_PARAM));
+		variableList.add(new TemplateVariable("page", VariableType.REQUEST_PARAM));
+
+		TemplateVariables variables = new TemplateVariables(variableList);
+		UriTemplate template = new org.springframework.hateoas.UriTemplate(baseUri, variables);		
+		Link link = new Link(template, rel);
+		return link;
 	}
 
 	@RequestMapping(method=RequestMethod.GET, value="/search/result")
@@ -84,8 +106,8 @@ public class ProjectController {
 			@RequestParam(value="name", required=false) String name,
 			@RequestParam(value="description", required=false) String description,
 			@RequestParam(value="tasks", required=false) List<URI> tasks,
-			@RequestParam(value="page") int page,
-			@RequestParam(value="size") int size) {
+			@RequestParam(value="page", required=false) Integer page,
+			@RequestParam(value="size", required=false) Integer size) {
 		ProjectSearchOptions options = new ProjectSearchOptions();
 		options.setName(name);
 		options.setDescription(description);
@@ -95,6 +117,7 @@ public class ProjectController {
 		Pageable pageable = new PageRequest(page, size);
 		Page<Project> result = projectService.find(options, pageable);
 		ProjectSearchResultsResource resource = new ProjectSearchResultsResource();
+		resource.setPages(result.getTotalPages());
 		resource.get_embedded().setProjects(mapperFacade.mapAsList(result.getContent(), ProjectResource.class));
 		resource.add(linkTo(methodOn(ProjectController.class).getProjectSearchResults(name, description, tasks, page, size)).withSelfRel());
 		for (int i = 0; i < result.getTotalPages(); ++i) {

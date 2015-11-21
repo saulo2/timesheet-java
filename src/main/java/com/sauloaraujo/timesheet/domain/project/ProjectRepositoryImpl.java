@@ -58,10 +58,10 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 		StringBuilder jpql = new StringBuilder("from Project p where 1 = 1");
 		
 		if (StringUtils.hasLength(options.getName())) {
-			jpql.append(" and p.name like :name");
+			jpql.append(" and lower(p.name) like :name");
 		}
 		if (StringUtils.hasLength(options.getDescription())) {
-			jpql.append(" and p.name like :description");
+			jpql.append(" and lower(p.description) like :description");
 		}
 		if (options.getTasks() != null) {
 			jpql.append(" and exists (select t from Task t where t member of p.tasks and t.id in (:tasks))");
@@ -76,10 +76,10 @@ public class ProjectRepositoryImpl extends QueryDslRepositorySupport implements 
 		TypedQuery<Result> query = manager.createQuery(jpql, resultClass);
 
 		if (StringUtils.hasLength(options.getName())) {
-			query.setParameter("name", options.getName());
+			query.setParameter("name", "%" + options.getName().toLowerCase() + "%");
 		}
 		if (StringUtils.hasLength(options.getDescription())) {
-			query.setParameter("description", options.getDescription());
+			query.setParameter("description", "%" + options.getDescription() + "%");
 		}
 		if (options.getTasks() != null) {
 			query.setParameter("tasks", mapperFacade.mapAsList(options.getTasks(), Integer.class));
